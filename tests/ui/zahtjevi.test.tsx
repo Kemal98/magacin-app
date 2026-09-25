@@ -9,6 +9,7 @@ const poslano = vi.fn();
 const odobreno = vi.fn();
 const odbijeno = vi.fn();
 const osvjezi = vi.fn();
+const izdato = vi.fn();
 
 vi.mock("@/app/actions/zahtjevi", () => ({
   posaljiZahtjev: async (_s: unknown, f: FormData) => {
@@ -19,16 +20,28 @@ vi.mock("@/app/actions/zahtjevi", () => ({
     odobreno(id, Object.fromEntries([...f.entries()]));
     return undefined;
   },
+  izdajZahtjev: async (id: string, _s: unknown, f: FormData) => {
+    izdato(id, Object.fromEntries([...f.entries()]));
+    return undefined;
+  },
   odbijZahtjev: async (id: string, _s: unknown, f: FormData) => {
     odbijeno(id, f.get("razlog"));
     return undefined;
   },
+}));
+vi.mock("@/app/_components/kamera-skener", () => ({
+  KameraSkener: ({ onKod, onZatvori }: { onKod: (k: string) => void; onZatvori: () => void }) => (
+    <div role="dialog">
+      <button onClick={() => { onKod("3850099"); onZatvori(); }}>lažni-sken</button>
+    </div>
+  ),
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: osvjezi }) }));
 
 import { Osvjezavac } from "../../app/_components/osvjezavac";
 import { ZahtjevForma } from "../../app/objekat/zahtjev/zahtjev-forma";
 import { ZahtjevObrada } from "../../app/magacin/zahtjevi/zahtjev-obrada";
+import { ZahtjevIzdavanje } from "../../app/magacin/zahtjevi/zahtjev-izdavanje";
 
 const artikli: ArtikalZaUnos[] = [
   {
@@ -50,14 +63,18 @@ const zahtjev: Zahtjev = {
   odobrio: null,
   odluka_vrijeme: null,
   razlog: null,
+  izdao: null,
+  izdano_vrijeme: null,
   stavke: [
     {
       id: "s1", artikal_id: "a1", naziv: "Kafa", mjera: "kg", pakovanje: "kutija", faktor: 10,
-      trazena_kolicina: 3, trazena_osnovna: 30, odobrena_kolicina: null, odobrena_osnovna: null, na_stanju: 12,
+      trazena_kolicina: 3, trazena_osnovna: 30, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null,
+      bar_kod: "3850001", pakovanje_bar_kod: "3850099", na_stanju: 12,
     },
     {
       id: "s2", artikal_id: "a2", naziv: "Mlijeko", mjera: "l", pakovanje: null, faktor: null,
-      trazena_kolicina: 5, trazena_osnovna: 5, odobrena_kolicina: null, odobrena_osnovna: null, na_stanju: 40,
+      trazena_kolicina: 5, trazena_osnovna: 5, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null,
+      bar_kod: null, pakovanje_bar_kod: null, na_stanju: 40,
     },
   ],
 };
@@ -69,6 +86,7 @@ afterEach(() => {
   odobreno.mockClear();
   odbijeno.mockClear();
   osvjezi.mockClear();
+  izdato.mockClear();
 });
 
 describe("objekat: novi zahtjev na tabletu", () => {
@@ -165,6 +183,64 @@ describe("magacioner: obrada zahtjeva", () => {
     await u.click(screen.getByRole("button", { name: "Odbij" }));
     await u.click(screen.getByRole("button", { name: "Odustani" }));
     expect(screen.getByRole("button", { name: "Odobri" })).toBeTruthy();
+  });
+});
+
+const odobren: Zahtjev = {
+  ...zahtjev,
+  status: "odobren",
+  odobrio: "Amra",
+  stavke: zahtjev.stavke.map((s) => ({ ...s, odobrena_kolicina: s.trazena_kolicina, odobrena_osnovna: s.trazena_osnovna })),
+};
+
+describe("magacioner: izdavanje odobrenog zahtjeva", () => {
+  it("izdaje odobrene količine jednim dodirom", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={odobren} />);
+    await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
+    expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "3", izdaj_s2: "5" });
+  });
+
+  it("može izdati manju količinu od odobrene", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={odobren} />);
+    const polje = screen.getByLabelText("Izdana količina Kafa");
+    await u.clear(polje);
+    await u.type(polje, "1");
+    await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
+    expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "1", izdaj_s2: "5" });
+  });
+
+  it("skeniranje bar koda artikla označava stavku kao provjerenu, bez slanja forme", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={odobren} />);
+    await u.click(screen.getByLabelText("Skenirajte artikal"));
+    await u.keyboard("3850001{Enter}");
+    expect(screen.getByLabelText("provjereno")).toBeTruthy();
+    expect(screen.getByText("Provjereno skeniranjem: 1 od 2")).toBeTruthy();
+    expect(izdato).not.toHaveBeenCalled();
+  });
+
+  it("bar kod pakovanja također provjerava stavku, a kamera radi kao rezerva", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={odobren} />);
+    await u.click(screen.getByRole("button", { name: "Kamera" }));
+    await u.click(screen.getByText("lažni-sken"));
+    expect(screen.getByText("Provjereno skeniranjem: 1 od 2")).toBeTruthy();
+  });
+
+  it("bar kod koji nije na zahtjevu javlja da ne odgovara nijednoj stavci", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={odobren} />);
+    await u.click(screen.getByLabelText("Skenirajte artikal"));
+    await u.keyboard("9999999999{Enter}");
+    expect(screen.getByRole("alert").textContent).toMatch(/9999999999 ne odgovara nijednoj stavci/);
+  });
+
+  it("označava stavke kojih nema dovoljno na stanju", () => {
+    const z = { ...odobren, stavke: [{ ...odobren.stavke[0], na_stanju: 4 }, odobren.stavke[1]] };
+    render(<ZahtjevIzdavanje z={z} />);
+    expect(screen.getAllByText(/\(nedovoljno\)/)).toHaveLength(1);
   });
 });
 

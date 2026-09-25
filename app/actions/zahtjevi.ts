@@ -83,3 +83,25 @@ export async function odbijZahtjev(
   revalidatePath("/magacin", "layout");
   return undefined;
 }
+
+/** Magacioner označava odobren zahtjev kao "na dostavi"; količine (izdaj_<stavka>) mogu biti manje od odobrenih. */
+export async function izdajZahtjev(
+  zahtjevId: string,
+  _stanje: StanjeForme,
+  forma: FormData,
+): Promise<StanjeForme> {
+  await zahtijevajUlogu("magacioner");
+  if (!UUID.test(zahtjevId)) return { greska: "Nepoznat zahtjev." };
+  const stavke = [];
+  for (const [ime, vrijednost] of forma.entries()) {
+    if (!ime.startsWith("izdaj_")) continue;
+    const kol = broj(String(vrijednost));
+    if (!Number.isFinite(kol) || kol < 0) return { greska: "Količina mora biti broj, nula ili veći." };
+    stavke.push({ stavka_id: ime.slice("izdaj_".length), kolicina: kol });
+  }
+  const supabase = await napraviServerKlijent();
+  const { error } = await supabase.rpc("izdaj_zahtjev", { p_zahtjev: zahtjevId, p_stavke: stavke });
+  if (error) return { greska: poruka(error) };
+  revalidatePath("/magacin", "layout");
+  return undefined;
+}

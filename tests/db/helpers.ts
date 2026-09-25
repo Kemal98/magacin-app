@@ -8,6 +8,17 @@ const DB_URL =
  * Pokreće test unutar transakcije koja se uvijek poništi, pa svaki test
  * počinje od praznog stanja i ne ostavlja tragove u bazi.
  */
+/** Nova veza na lokalnu bazu; odbija svaku drugu, da testovi nikad ne diraju tuđu bazu. */
+export async function poveziLokalno(): Promise<Client> {
+  const host = new URL(DB_URL).hostname;
+  if (!["127.0.0.1", "localhost", "::1"].includes(host)) {
+    throw new Error(`Testovi rade samo na lokalnoj bazi, a DATABASE_URL pokazuje na ${host}`);
+  }
+  const db = new Client({ connectionString: DB_URL });
+  await db.connect();
+  return db;
+}
+
 export async function uTransakciji<T>(
   test: (db: Client) => Promise<T>,
 ): Promise<T> {
@@ -24,7 +35,7 @@ export async function uTransakciji<T>(
     // na testove. Sve se poništava s transakcijom, pa razvojna baza ostaje netaknuta.
     // Knjiga se ne briše redom (nepromjenjiva je), pa se prazni cijela, i to prvo.
     await db.query(
-      "truncate magacin.zahtjev_stavka, magacin.zahtjev, magacin.kretanje_magacina, magacin.prijem, magacin.zaliha_magacina",
+      "truncate magacin.kretanje_objekta, magacin.zaliha_objekta, magacin.zahtjev_stavka, magacin.zahtjev, magacin.kretanje_magacina, magacin.prijem, magacin.zaliha_magacina",
     );
     await db.query("delete from auth.users");
     await db.query("delete from magacin.artikal");

@@ -5,6 +5,7 @@ const BOJA_STATUSA = {
   poslan: "bg-amber-100 text-amber-900 border-amber-500",
   odobren: "bg-green-100 text-green-900 border-green-700",
   odbijen: "bg-red-100 text-red-900 border-red-700",
+  na_dostavi: "bg-blue-100 text-blue-900 border-blue-700",
 } as const;
 
 export function StatusOznaka({ status }: { status: Zahtjev["status"] }) {
@@ -36,15 +37,18 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
 
       <ul className="flex flex-col gap-1 text-xl">
         {z.stavke.map((s) => {
-          const manje =
-            z.status === "odobren" && s.odobrena_kolicina !== null && s.odobrena_kolicina < s.trazena_kolicina;
+          const krenulo = z.status === "na_dostavi";
+          const kol = krenulo ? s.izdana_kolicina : s.odobrena_kolicina;
+          const osn = krenulo ? s.izdana_osnovna : s.odobrena_osnovna;
+          const odlucen = (z.status === "odobren" || krenulo) && kol !== null;
+          const manje = odlucen && kol !== null && kol < s.trazena_kolicina;
           return (
             <li key={s.id}>
               <span className="font-semibold">{s.naziv}</span>: traženo {kolicinaTekst(s.trazena_kolicina, s.trazena_osnovna, s)}
-              {z.status === "odobren" && s.odobrena_kolicina !== null && (
+              {odlucen && kol !== null && (
                 <span className={manje ? "font-bold text-amber-800" : "text-green-800"}>
                   {" "}
-                  → odobreno {kolicinaTekst(s.odobrena_kolicina, s.odobrena_osnovna ?? 0, s)}
+                  → {krenulo ? "izdato" : "odobreno"} {kolicinaTekst(kol, osn ?? 0, s)}
                   {manje && " (manje od traženog)"}
                 </span>
               )}
@@ -58,8 +62,14 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
       )}
       {z.status !== "poslan" && z.odobrio && (
         <p className="text-lg text-zinc-500">
-          {z.status === "odobren" ? "Odobrio" : "Odbio"}: {z.odobrio}
+          {z.status === "odbijen" ? "Odbio" : "Odobrio"}: {z.odobrio}
           {z.odluka_vrijeme && `, ${datumVrijeme(z.odluka_vrijeme)}`}
+        </p>
+      )}
+      {z.status === "na_dostavi" && z.izdao && (
+        <p className="text-lg text-zinc-500">
+          Izdao: {z.izdao}
+          {z.izdano_vrijeme && `, ${datumVrijeme(z.izdano_vrijeme)}`}
         </p>
       )}
     </li>

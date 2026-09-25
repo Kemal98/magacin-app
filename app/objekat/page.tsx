@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { ZahtjevKartica } from "@/app/_components/zahtjev-prikaz";
+import { kolicina as fmt } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
+import { napraviServerKlijent } from "@/lib/supabase/server";
 import { ucitajZahtjeve } from "@/lib/zahtjevi";
 
 export const metadata = { title: "Objekat" };
@@ -15,6 +17,10 @@ export default async function ObjekatPocetna({
   const korisnik = await zahtijevajUlogu("objekat");
   const { poslano } = await searchParams;
   const zahtjevi = await ucitajZahtjeve(undefined, 30);
+  const supabase = await napraviServerKlijent();
+  const { data: zalihaPodaci, error: zalihaGreska } = await supabase.rpc("zaliha_objekta");
+  if (zalihaGreska) throw new Error(`Učitavanje zalihe nije uspjelo: ${zalihaGreska.message}`);
+  const zaliha = zalihaPodaci as { artikal_id: string; naziv: string; mjera: string; kolicina: number | string }[];
 
   return (
     <Okvir korisnik={korisnik} naslov="Objekat">
@@ -30,6 +36,24 @@ export default async function ObjekatPocetna({
       >
         Novi zahtjev za robu
       </Link>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-2xl font-semibold">Zaliha objekta</h2>
+        {zaliha.length === 0 ? (
+          <p className="text-xl text-zinc-500">Još nema izdate robe.</p>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2">
+            {zaliha.map((z) => (
+              <li key={z.artikal_id} className="flex justify-between rounded-xl border-2 border-zinc-200 p-3 text-xl">
+                <span>{z.naziv}</span>
+                <span className="font-bold">
+                  {fmt(Number(z.kolicina))} {z.mjera}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Vaši zahtjevi</h2>

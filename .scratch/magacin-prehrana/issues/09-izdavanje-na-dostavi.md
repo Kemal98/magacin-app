@@ -4,10 +4,10 @@
 
 **Blocked by:** 08 (Zahtjev i odobravanje), 06 (Skener bar koda)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Izdavanje skida zalihu magacina i povećava zalihu objekta po prosječnoj cijeni izdatog
-- [ ] Izdavanje iznad stanja magacina se odbija s jasnom porukom
-- [ ] Paralelno izdavanje istog artikla ne može preći stanje
-- [ ] Izdavanje ne stvara trošak objekta
-- [ ] Status zahtjeva postaje "na dostavi" i vidljiv je objektu
+- [x] Izdavanje skida zalihu magacina i povećava zalihu objekta po prosječnoj cijeni izdatog
+- [x] Izdavanje iznad stanja magacina se odbija s jasnom porukom
+- [x] Paralelno izdavanje istog artikla ne može preći stanje
+- [x] Izdavanje ne stvara trošak objekta
+- [x] Status zahtjeva postaje "na dostavi" i vidljiv je objektu
