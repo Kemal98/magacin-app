@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { OtpisiPrikaz } from "@/app/_components/otpis-prikaz";
@@ -20,7 +21,9 @@ export default async function OtpisMenadzerStranica() {
         Vrijednost prikazanih otpisa: <span className="text-red-700">{km(ukupno)}</span>{" "}
         <span className="text-lg font-normal text-zinc-500">({otpisi.length} zadnjih unosa)</span>
       </p>
-      <OtpisiPrikaz otpisi={otpisi} />
+      <PretragaListe placeholder="Traži artikal, razlog, osobu…">
+        <OtpisiPrikaz otpisi={otpisi} />
+      </PretragaListe>
     </Okvir>
   );
 }

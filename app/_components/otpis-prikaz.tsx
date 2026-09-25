@@ -7,7 +7,7 @@ export function OtpisiPrikaz({ otpisi }: { otpisi: Otpis[] }) {
   return (
     <ul className="flex flex-col gap-3">
       {otpisi.map((o, i) => (
-        <li key={`${o.vrijeme}-${i}`} className="flex flex-col gap-1 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <li data-red key={`${o.vrijeme}-${i}`} className="flex flex-col gap-1 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="text-2xl font-bold">
               {o.artikal}: {fmt(Number(o.kolicina))} {o.mjera}

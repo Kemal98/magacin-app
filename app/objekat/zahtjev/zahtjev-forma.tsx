@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { posaljiZahtjev } from "@/app/actions/zahtjevi";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
 import { kolicina as fmt } from "@/lib/format";
@@ -36,7 +37,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
     izmijeni(id, { kolicina: String(nova) });
   };
 
-  const vidljivi = artikli.filter((a) => a.naziv.toLowerCase().includes(trazi.trim().toLowerCase()));
+  const vidljivi = artikli.filter((a) => poklapa(a.naziv, trazi));
 
   return (
     <form action={akcija} className="flex flex-col gap-6">

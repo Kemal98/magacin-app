@@ -9,7 +9,7 @@ export function RazlikePrikaz({ razlike }: { razlike: Razlika[] }) {
   return (
     <ul className="flex flex-col gap-3">
       {razlike.map((r, i) => (
-        <li key={`${r.zahtjev_id}-${r.artikal}-${i}`} className="rounded-2xl border border-red-300 bg-red-50 p-4 text-xl shadow-sm">
+        <li data-red key={`${r.zahtjev_id}-${r.artikal}-${i}`} className="rounded-2xl border border-red-300 bg-red-50 p-4 text-xl shadow-sm">
           <p className="font-bold">
             {r.objekat}: {r.artikal}
           </p>

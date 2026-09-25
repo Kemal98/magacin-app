@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { Plocica } from "@/app/_components/plocica";
@@ -66,9 +67,10 @@ export default async function ObjekatPocetna({
         {zaliha.length === 0 ? (
           <p className="text-xl text-zinc-500">Još nema izdate robe.</p>
         ) : (
+          <PretragaListe placeholder="Traži artikal u zalihi…">
           <ul className="grid gap-2 sm:grid-cols-2">
             {zaliha.map((z) => (
-              <li key={z.artikal_id} className="flex justify-between rounded-xl border-2 border-zinc-200 p-3 text-xl bg-white">
+              <li data-red key={z.artikal_id} className="flex justify-between rounded-xl border-2 border-zinc-200 p-3 text-xl bg-white">
                 <span>{z.naziv}</span>
                 <span className="font-bold">
                   {fmt(Number(z.kolicina))} {z.mjera}
@@ -76,6 +78,7 @@ export default async function ObjekatPocetna({
               </li>
             ))}
           </ul>
+          </PretragaListe>
         )}
       </section>
 
@@ -84,11 +87,13 @@ export default async function ObjekatPocetna({
         {zahtjevi.length === 0 ? (
           <p className="text-xl text-zinc-500">Još niste poslali nijedan zahtjev.</p>
         ) : (
-          <ul className="flex flex-col gap-3">
-            {zahtjevi.map((z) => (
-              <ZahtjevKartica key={z.id} z={z} />
-            ))}
-          </ul>
+          <PretragaListe placeholder="Traži zahtjev, artikal, status…">
+            <ul className="flex flex-col gap-3">
+              {zahtjevi.map((z) => (
+                <ZahtjevKartica key={z.id} z={z} />
+              ))}
+            </ul>
+          </PretragaListe>
         )}
       </section>
     </Okvir>

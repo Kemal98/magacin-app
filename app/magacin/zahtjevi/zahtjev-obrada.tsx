@@ -14,7 +14,7 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
   const [odbijanje, setOdbijanje] = useState(false);
 
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border border-amber-500 p-4 shadow-sm">
+    <li data-red className="flex flex-col gap-4 rounded-2xl border border-amber-500 p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-2xl font-bold">{z.objekat}</p>

@@ -1,4 +1,5 @@
 import { Okvir } from "@/app/_components/okvir";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { RazlikePrikaz } from "@/app/_components/razlike-prikaz";
 import { zahtijevajUlogu } from "@/lib/korisnik";
@@ -13,7 +14,9 @@ export default async function RazlikeStranica() {
     <Okvir korisnik={korisnik} naslov="Razlike pri prijemu">
       <Osvjezavac sekundi={15} />
       <Nazad href="/menadzer" />
-      <RazlikePrikaz razlike={await ucitajRazlike()} />
+      <PretragaListe placeholder="Traži objekat, artikal, osobu…">
+        <RazlikePrikaz razlike={await ucitajRazlike()} />
+      </PretragaListe>
     </Okvir>
   );
 }

@@ -51,6 +51,31 @@ describe("storno: pregled radnji", () => {
   });
 });
 
+describe("storno: pretraga", () => {
+  it("traži po artiklu, dobavljaču, objektu i razlogu, uz filter vrste", async () => {
+    const u = userEvent.setup();
+    render(<StornoLista radnje={radnje} />);
+    const polje = screen.getByLabelText("Traži radnju");
+    await u.type(polje, "mesnica");
+    expect(screen.getByText(/Mesnica/)).toBeTruthy();
+    expect(screen.queryByText(/Pekara/)).toBeNull();
+    await u.clear(polje);
+    await u.type(polje, "SANK");
+    expect(screen.getByText(/ŠANK HOTEL/)).toBeTruthy();
+    await u.clear(polje);
+    await u.type(polje, "dvaput"); // razlog storna
+    expect(screen.getByText(/Mesnica/)).toBeTruthy();
+    expect(screen.queryByText(/Pekara/)).toBeNull();
+  });
+
+  it("nema rezultata: poruka", async () => {
+    const u = userEvent.setup();
+    render(<StornoLista radnje={radnje} />);
+    await u.type(screen.getByLabelText("Traži radnju"), "banana");
+    expect(screen.getByText("Nema radnji za prikaz.")).toBeTruthy();
+  });
+});
+
 describe("storno: poništavanje", () => {
   it("traži razlog i šalje vrstu, identifikator i razlog", async () => {
     const u = userEvent.setup();

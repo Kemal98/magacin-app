@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { IzvozDugme } from "@/app/_components/izvoz-dugme";
 import { Okvir } from "@/app/_components/okvir";
 import { km, kolicina as fmt } from "@/lib/format";
@@ -48,11 +49,11 @@ export default async function TrosakStranica({
       {redovi.length === 0 ? (
         <p className="text-xl text-zinc-500">Nema podataka za izabrani period i objekat.</p>
       ) : (
-        <>
+        <PretragaListe placeholder="Traži objekat ili artikal…" grupa="[data-grupa]">
           <section className="flex flex-col gap-4">
             <h2 className="text-2xl font-semibold">Po objektu</h2>
             {objekti_.map((g) => (
-              <div key={g.objekat_id} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+              <div data-grupa key={g.objekat_id} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <h3 className="text-2xl font-bold">{g.objekat}</h3>
                   <p className="text-xl font-bold">{km(ukupanTrosak(g.zbir))}</p>
@@ -71,7 +72,7 @@ export default async function TrosakStranica({
                     {g.redovi
                       .filter((r) => r.potroseno > 0 || r.izuzeci > 0)
                       .map((r) => (
-                        <tr key={r.artikal_id} className="border-b border-zinc-200">
+                        <tr data-red data-trazi={`${g.objekat} ${r.artikal}`} key={r.artikal_id} className="border-b border-zinc-200">
                           <td className="py-1">{r.artikal}</td>
                           <td className="py-1 text-right">
                             {fmt(r.potroseno)} {r.mjera}
@@ -87,7 +88,7 @@ export default async function TrosakStranica({
             ))}
           </section>
 
-          <section className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <section data-grupa className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
             <h2 className="text-2xl font-semibold">Po artiklu (svi izabrani objekti)</h2>
             <table className="w-full text-left text-lg">
               <thead>
@@ -102,7 +103,7 @@ export default async function TrosakStranica({
                 {artikli
                   .filter((a) => a.potroseno > 0 || a.izuzeci > 0)
                   .map((a) => (
-                    <tr key={a.artikal_id} className="border-b border-zinc-200">
+                    <tr data-red key={a.artikal_id} className="border-b border-zinc-200">
                       <td className="py-1">{a.artikal}</td>
                       <td className="py-1 text-right">
                         {fmt(a.potroseno)} {a.mjera}
@@ -114,7 +115,7 @@ export default async function TrosakStranica({
               </tbody>
             </table>
           </section>
-        </>
+        </PretragaListe>
       )}
     </Okvir>
   );

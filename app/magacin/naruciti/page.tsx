@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { ZaNarucitiPrikaz } from "@/app/_components/za-naruciti-prikaz";
@@ -13,7 +14,9 @@ export default async function NarucitiMagacinStranica() {
     <Okvir korisnik={korisnik} naslov="Za naručivanje">
       <Osvjezavac sekundi={15} />
       <Nazad href="/magacin" />
-      <ZaNarucitiPrikaz artikli={await ucitajIspodMinimuma()} />
+      <PretragaListe placeholder="Traži artikal…">
+        <ZaNarucitiPrikaz artikli={await ucitajIspodMinimuma()} />
+      </PretragaListe>
     </Okvir>
   );
 }

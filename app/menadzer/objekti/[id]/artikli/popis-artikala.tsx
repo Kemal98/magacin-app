@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { predloziIzExcela, sacuvajPopis } from "@/app/actions/popis-objekta";
 
 type Artikal = { id: string; naziv: string; mjera: string; vrsta: string };
@@ -40,7 +41,7 @@ export function PopisArtikala({
 
   const vidljivi = artikli.filter(
     (a) =>
-      (!samoOznaceni || oznaceni.has(a.id)) && a.naziv.toLowerCase().includes(trazi.trim().toLowerCase()),
+      (!samoOznaceni || oznaceni.has(a.id)) && poklapa(a.naziv, trazi),
   );
 
   return (

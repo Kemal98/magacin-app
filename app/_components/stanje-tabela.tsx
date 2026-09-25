@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { km, kolicina } from "@/lib/format";
 
 export type RedStanja = {
@@ -25,7 +26,7 @@ export function StanjeTabela({ redovi }: { redovi: RedStanja[] }) {
   const vidljivi = redovi.filter(
     (r) =>
       (samoIspod ? r.ispod_minimuma : saPrazninama || r.kolicina > 0 || r.ispod_minimuma) &&
-      r.naziv.toLowerCase().includes(trazi.trim().toLowerCase()),
+      poklapa(`${r.naziv} ${r.mjera}`, trazi),
   );
   const ukupno = redovi.reduce((z, r) => z + r.vrijednost, 0);
   const naStanju = redovi.filter((r) => r.kolicina > 0).length;

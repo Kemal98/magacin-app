@@ -1,4 +1,5 @@
 import { Okvir } from "@/app/_components/okvir";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { SmjenaKartica } from "@/app/_components/smjena-prikaz";
 import { datumVrijeme, km, kolicina as fmt } from "@/lib/format";
@@ -16,14 +17,15 @@ export default async function SmjeneStranica() {
       <Osvjezavac sekundi={15} />
       <Nazad href="/menadzer" />
 
-      <section className="flex flex-col gap-3">
+      <PretragaListe placeholder="Traži objekat, ime osobe, smjenu, artikal…" grupa="[data-grupa]">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Upozorenja: više nego moguće ({upozorenja.length})</h2>
         {upozorenja.length === 0 ? (
           <p className="text-xl text-zinc-500">Nema upozorenja.</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {upozorenja.map((u, i) => (
-              <li key={`${u.smjena_id}-${u.artikal}-${i}`} className="rounded-2xl border border-amber-500 bg-amber-50 p-4 text-xl shadow-sm">
+              <li data-red key={`${u.smjena_id}-${u.artikal}-${i}`} className="rounded-2xl border border-amber-500 bg-amber-50 p-4 text-xl shadow-sm">
                 <p className="font-bold">
                   {u.objekat}: {u.artikal} (+{fmt(Number(u.visak))} {u.mjera}, {km(Number(u.vrijednost))})
                 </p>
@@ -37,7 +39,7 @@ export default async function SmjeneStranica() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Zatvorene smjene</h2>
         {smjene.length === 0 ? (
           <p className="text-xl text-zinc-500">Još nema zatvorenih smjena.</p>
@@ -49,6 +51,7 @@ export default async function SmjeneStranica() {
           </ul>
         )}
       </section>
+      </PretragaListe>
     </Okvir>
   );
 }

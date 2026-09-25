@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
@@ -26,10 +27,13 @@ export default async function Stranica() {
         <NazivForma vrsta="objekat" dugme="Dodaj" />
       </section>
 
+      <PretragaListe placeholder="Traži po nazivu…">
       <ul className="flex flex-col gap-3">
         {data.length === 0 && <li className="text-xl text-zinc-500">Još nema unosa.</li>}
         {data.map((z) => (
           <li
+            data-red
+            data-trazi={`${z.naziv}${z.aktivan ? "" : " isključen"}`}
             key={z.id}
             className={`flex flex-wrap items-start gap-3 rounded-2xl border p-4 shadow-sm ${z.aktivan ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
           >
@@ -51,6 +55,7 @@ export default async function Stranica() {
           </li>
         ))}
       </ul>
+      </PretragaListe>
     </Okvir>
   );
 }

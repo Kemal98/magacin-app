@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { zatvoriSmjenu } from "@/app/actions/smjene";
 import { broj } from "@/lib/broj";
-import { kolicina as fmt } from "@/lib/format";
+import { datumVrijeme, kolicina as fmt } from "@/lib/format";
 import type { RedZaZatvaranje } from "@/lib/smjene-tipovi";
 
 const POLJE = "min-h-16 w-32 rounded-xl border-2 border-zinc-300 px-3 text-center text-3xl font-bold";
@@ -12,9 +12,15 @@ const POLJE = "min-h-16 w-32 rounded-xl border-2 border-zinc-300 px-3 text-cente
  * Završno stanje na kraju smjene. Svaki artikal koji je po sistemu na zalihi mora biti izbrojan.
  * Ako je upisano više nego što je moguće, traži se razlog (ne blokira zatvaranje).
  */
-export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
+export type ZadnjaSmjena = { zatvorena: string; ime: string; naziv: string | null };
+
+export function ZatvaranjeForma({ redovi, zadnja = null }: { redovi: RedZaZatvaranje[]; zadnja?: ZadnjaSmjena | null }) {
   const [stanje, akcija, radi] = useActionState(zatvoriSmjenu, undefined);
   const [vrijednosti, setVrijednosti] = useState<Record<string, string>>({});
+  const forma = useRef<HTMLFormElement>(null);
+  const [potvrda, setPotvrda] = useState(false);
+  // Od zadnjeg zatvaranja nije stiglo ništa novo ni zabilježen izuzetak: vjerovatno je smjena već zatvorena.
+  const nemaPromjena = redovi.every((r) => r.primljeno === 0 && r.izuzeci === 0);
 
   const naZalihi = redovi.filter((r) => r.moguce > 0);
   const ostali = redovi.filter((r) => r.moguce <= 0);
@@ -64,10 +70,29 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
   };
 
   return (
-    <form action={akcija} className="flex flex-col gap-6">
-      <p className="text-xl text-zinc-600">
-        Izbrojte robu i upišite završno stanje za svaki artikal. Potrošnja se računa sama.
-      </p>
+    <form ref={forma} action={akcija} className="flex flex-col gap-6">
+      <section className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <h2 className="text-2xl font-semibold">Šta znači zatvaranje smjene?</h2>
+        <p className="text-lg text-zinc-700">
+          Izbrojite robu na kraju smjene i upišite koliko ste našli. Aplikacija iz toga izračuna šta je potrošeno i to
+          knjiži kao trošak objekta. Ono što ste izbrojali postaje <strong>početno stanje sljedeće smjene</strong>, koja
+          počinje odmah. Zato se ova stranica uvijek može otvoriti ponovo: to ne vraća zatvorenu smjenu, nego bi
+          zatvorilo novu.
+        </p>
+        {zadnja ? (
+          <p className="text-lg font-semibold text-brand">
+            Zadnja smjena je zatvorena {datumVrijeme(zadnja.zatvorena)}
+            {zadnja.naziv && ` (${zadnja.naziv})`}, zatvorio: {zadnja.ime}. Sve što sada upišete ide u novu smjenu.
+          </p>
+        ) : (
+          <p className="text-lg text-zinc-600">Ovo bi bila prva zatvorena smjena ovog objekta.</p>
+        )}
+        {zadnja && nemaPromjena && (
+          <p role="alert" className="rounded-xl border-2 border-amber-500 bg-amber-50 p-3 text-lg font-semibold text-amber-900">
+            Od zadnjeg zatvaranja nije stigla nova roba ni zabilježen izuzetak. Provjerite da smjenu niste već zatvorili.
+          </p>
+        )}
+      </section>
 
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Artikli na zalihi ({naZalihi.length})</h2>
@@ -105,13 +130,45 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
       {nedostaje > 0 && (
         <p className="text-lg text-zinc-600">Još nije upisano završno stanje za {nedostaje} artikala.</p>
       )}
-      <button
-        type="submit"
-        disabled={radi}
-        className="min-h-20 rounded-2xl bg-brand text-3xl font-bold text-white active:bg-brand-dark disabled:opacity-50"
-      >
-        {radi ? "Zatvaram…" : "Zatvori smjenu"}
-      </button>
+      {!potvrda ? (
+        <button
+          type="button"
+          onClick={() => {
+            if (forma.current?.reportValidity()) setPotvrda(true);
+          }}
+          className="min-h-20 rounded-2xl bg-brand text-3xl font-bold text-white active:bg-brand-dark"
+        >
+          Zatvori smjenu
+        </button>
+      ) : (
+        <div role="alertdialog" aria-label="Potvrda zatvaranja smjene" className="flex flex-col gap-3 rounded-2xl border-2 border-brand p-4">
+          <p className="text-xl font-semibold">
+            Zatvarate smjenu. Potrošnja se knjiži kao trošak, a izbrojano stanje postaje početno stanje sljedeće smjene.
+            Ovo se ne može vratiti.
+          </p>
+          {zadnja && nemaPromjena && (
+            <p className="text-lg font-bold text-amber-900">
+              Upozorenje: od zadnjeg zatvaranja nije bilo promjena. Da li ste sigurni?
+            </p>
+          )}
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="submit"
+              disabled={radi}
+              className="min-h-16 flex-1 rounded-2xl bg-brand px-6 text-2xl font-bold text-white active:bg-brand-dark disabled:opacity-50"
+            >
+              {radi ? "Zatvaram…" : "Da, zatvori smjenu"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setPotvrda(false)}
+              className="min-h-16 rounded-2xl border-2 border-zinc-300 bg-white px-8 text-2xl font-semibold active:bg-zinc-200"
+            >
+              Nazad
+            </button>
+          </div>
+        </div>
+      )}
     </form>
   );
 }

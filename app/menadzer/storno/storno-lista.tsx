@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { stornirajRadnju } from "@/app/actions/storno";
 import { datumVrijeme, km } from "@/lib/format";
+import { poklapa } from "@/lib/pretraga";
 import { NAZIV_VRSTE, type RadnjaZaStorno, type VrstaStorna } from "@/lib/storno-tipovi";
 
 const FILTRI: { vrijednost: VrstaStorna | "sve"; naziv: string }[] = [
@@ -14,7 +15,12 @@ const FILTRI: { vrijednost: VrstaStorna | "sve"; naziv: string }[] = [
 
 export function StornoLista({ radnje }: { radnje: RadnjaZaStorno[] }) {
   const [filter, setFilter] = useState<VrstaStorna | "sve">("sve");
-  const vidljive = radnje.filter((r) => filter === "sve" || r.vrsta === filter);
+  const [trazi, setTrazi] = useState("");
+  const vidljive = radnje.filter(
+    (r) =>
+      (filter === "sve" || r.vrsta === filter) &&
+      poklapa(`${NAZIV_VRSTE[r.vrsta]} ${r.opis} ${r.ime} ${r.storno_razlog ?? ""} ${r.storno_ime ?? ""}`, trazi),
+  );
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap gap-2" role="group" aria-label="Vrsta radnje">
@@ -32,6 +38,14 @@ export function StornoLista({ radnje }: { radnje: RadnjaZaStorno[] }) {
           </button>
         ))}
       </div>
+      <input
+        value={trazi}
+        onChange={(e) => setTrazi(e.target.value)}
+        placeholder="Traži artikal, dobavljača, objekat, osobu, razlog…"
+        aria-label="Traži radnju"
+        autoComplete="off"
+        className="min-h-14 rounded-xl border-2 border-zinc-300 bg-white px-4 text-xl"
+      />
       {vidljive.length === 0 ? (
         <p className="text-xl text-zinc-500">Nema radnji za prikaz.</p>
       ) : (

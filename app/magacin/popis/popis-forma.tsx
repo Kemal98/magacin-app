@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState, useTransition } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { pregledajPopis, potvrdiPopis } from "@/app/actions/popis";
 import { KameraSkener } from "@/app/_components/kamera-skener";
 import { pretrazi, type ArtikalZaUnos } from "@/lib/bar-kod";
@@ -65,7 +66,7 @@ export function PopisForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
   const vidljivi = artikli.filter(
     (a) =>
       (!samoIzbrojani || (vrijednosti[a.id] ?? "").trim() !== "") &&
-      a.naziv.toLowerCase().includes(trazi.trim().toLowerCase()),
+      poklapa(a.naziv, trazi),
   );
 
   // Korak 2: pregled razlika

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { dodajIzuzetak } from "@/app/actions/smjene";
 import { kolicina as fmt } from "@/lib/format";
 
@@ -15,7 +16,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
   const [trazi, setTrazi] = useState("");
   const [razlog, setRazlog] = useState("");
   const izabran = artikli.find((a) => a.id === artikal);
-  const vidljivi = artikli.filter((a) => a.naziv.toLowerCase().includes(trazi.trim().toLowerCase()));
+  const vidljivi = artikli.filter((a) => poklapa(a.naziv, trazi));
 
   if (artikli.length === 0) {
     return <p className="text-xl text-zinc-500">Nema artikala na zalihi objekta.</p>;

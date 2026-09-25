@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { otkljucajKorisnika, promijeniAktivnostKorisnika } from "@/app/actions/korisnici";
 import { Nazad } from "@/app/_components/nazad";
 import { Okvir } from "@/app/_components/okvir";
@@ -42,11 +43,12 @@ export default async function KorisniciStranica() {
         </section>
       )}
 
+      <PretragaListe placeholder="Traži ime, ulogu, objekat, e-adresu…" grupa="[data-grupa]">
       {(["menadzer", "magacioner", "objekat"] as const).map((uloga) => {
         const grupa = korisnici.filter((k) => k.uloga === uloga);
         if (grupa.length === 0) return null;
         return (
-          <section key={uloga} className="flex flex-col gap-3">
+          <section key={uloga} data-grupa className="flex flex-col gap-3">
             <h2 className="text-2xl font-semibold">{NAZIV_ULOGE[uloga]}</h2>
             <ul className="flex flex-col gap-3">
               {grupa.map((k) => (
@@ -56,6 +58,7 @@ export default async function KorisniciStranica() {
           </section>
         );
       })}
+      </PretragaListe>
     </Okvir>
   );
 }
@@ -63,6 +66,7 @@ export default async function KorisniciStranica() {
 function KorisnikRed({ k, jaSam }: { k: KorisnikZaUpravljanje; jaSam: boolean }) {
   return (
     <li
+      data-red
       className={`flex flex-wrap items-center gap-3 rounded-2xl border p-4 shadow-sm ${
         k.aktivan ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-100 text-zinc-500"
       }`}

@@ -61,6 +61,14 @@ describe("stanje magacina: minimum", () => {
     expect(screen.queryByText("Šećer")).toBeNull();
   });
 
+  it("pretraga ne pravi razliku između slova s kvačicama i bez njih", async () => {
+    const u = userEvent.setup();
+    render(<StanjeTabela redovi={redovi} />);
+    await u.type(screen.getByLabelText("Traži artikal"), "secer");
+    expect(screen.getByText("Šećer")).toBeTruthy();
+    expect(screen.queryByText("Kafa")).toBeNull();
+  });
+
   it("bez artikala ispod minimuma nema crvenog upozorenja", () => {
     render(<StanjeTabela redovi={[redovi[1]]} />);
     expect(screen.queryByRole("status")).toBeNull();

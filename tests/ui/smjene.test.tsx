@@ -55,6 +55,7 @@ describe("zatvaranje smjene", () => {
     await u.type(screen.getByLabelText("Završno stanje Mlijeko"), "3");
     await u.type(screen.getByLabelText("Ime osobe koja zatvara smjenu"), "Emir");
     await u.click(screen.getByRole("button", { name: "Zatvori smjenu" }));
+    await u.click(screen.getByRole("button", { name: "Da, zatvori smjenu" }));
     expect(zatvoreno).toHaveBeenCalledWith(
       expect.objectContaining({ ime: "Emir", zavrsno_a1: "6,5", zavrsno_a2: "3", zavrsno_a3: "" }),
     );
@@ -74,6 +75,7 @@ describe("zatvaranje smjene", () => {
     await u.type(screen.getByLabelText("Završno stanje Mlijeko"), "5");
     await u.type(screen.getByLabelText("Ime osobe koja zatvara smjenu"), "Emir");
     await u.click(screen.getByRole("button", { name: "Zatvori smjenu" }));
+    await u.click(screen.getByRole("button", { name: "Da, zatvori smjenu" }));
     expect(zatvoreno).toHaveBeenCalledWith(
       expect.objectContaining({ zavrsno_a1: "10", razlog_a1: "Dobijeno od kuhinje" }),
     );
@@ -85,6 +87,7 @@ describe("zatvaranje smjene", () => {
     await u.type(screen.getByLabelText("Završno stanje Kafa"), "5");
     await u.type(screen.getByLabelText("Ime osobe koja zatvara smjenu"), "Emir");
     await u.click(screen.getByRole("button", { name: "Zatvori smjenu" }));
+    expect(screen.queryByRole("alertdialog")).toBeNull(); // potvrda se ne nudi dok forma nije potpuna
     expect(zatvoreno).not.toHaveBeenCalled();
     expect(screen.getByText("Još nije upisano završno stanje za 1 artikala.")).toBeTruthy();
   });
@@ -95,6 +98,47 @@ describe("zatvaranje smjene", () => {
     await u.type(screen.getByLabelText("Završno stanje Kafa"), "5");
     await u.type(screen.getByLabelText("Završno stanje Mlijeko"), "3");
     await u.click(screen.getByRole("button", { name: "Zatvori smjenu" }));
+    expect(screen.queryByRole("alertdialog")).toBeNull(); // potvrda se ne nudi dok forma nije potpuna
+    expect(zatvoreno).not.toHaveBeenCalled();
+  });
+});
+
+describe("zatvaranje smjene: objašnjenje i potvrda", () => {
+  it("objašnjava šta znači zatvaranje i da izbrojano postaje početno stanje sljedeće smjene", () => {
+    render(<ZatvaranjeForma redovi={redovi} />);
+    expect(screen.getByText("Šta znači zatvaranje smjene?")).toBeTruthy();
+    expect(screen.getByText(/početno stanje sljedeće smjene/)).toBeTruthy();
+    expect(screen.getByText(/prva zatvorena smjena/)).toBeTruthy();
+  });
+
+  it("prikazuje kad je i ko zadnji put zatvorio smjenu", () => {
+    render(<ZatvaranjeForma redovi={redovi} zadnja={{ zatvorena: new Date().toISOString(), ime: "Emir", naziv: "Prva smjena" }} />);
+    expect(screen.getByText(/Zadnja smjena je zatvorena.*Prva smjena.*zatvorio: Emir/)).toBeTruthy();
+  });
+
+  it("upozorava kad od zadnjeg zatvaranja nije bilo nikakvih promjena", () => {
+    const bezPromjena = redovi.map((r) => ({ ...r, primljeno: 0, izuzeci: 0 }));
+    render(<ZatvaranjeForma redovi={bezPromjena} zadnja={{ zatvorena: new Date().toISOString(), ime: "Emir", naziv: null }} />);
+    expect(screen.getByText(/Provjerite da smjenu niste već zatvorili/)).toBeTruthy();
+  });
+
+  it("bez zadnje smjene nema tog upozorenja", () => {
+    const bezPromjena = redovi.map((r) => ({ ...r, primljeno: 0, izuzeci: 0 }));
+    render(<ZatvaranjeForma redovi={bezPromjena} />);
+    expect(screen.queryByText(/Provjerite da smjenu niste već zatvorili/)).toBeNull();
+  });
+
+  it("zatvaranje traži potvrdu, a „Nazad“ je vraća bez slanja", async () => {
+    const u = userEvent.setup();
+    render(<ZatvaranjeForma redovi={redovi} />);
+    await u.type(screen.getByLabelText("Završno stanje Kafa"), "6");
+    await u.type(screen.getByLabelText("Završno stanje Mlijeko"), "3");
+    await u.type(screen.getByLabelText("Ime osobe koja zatvara smjenu"), "Emir");
+    await u.click(screen.getByRole("button", { name: "Zatvori smjenu" }));
+    expect(screen.getByRole("alertdialog").textContent).toMatch(/Ovo se ne može vratiti/);
+    expect(zatvoreno).not.toHaveBeenCalled();
+    await u.click(screen.getByRole("button", { name: "Nazad" }));
+    expect(screen.queryByRole("alertdialog")).toBeNull();
     expect(zatvoreno).not.toHaveBeenCalled();
   });
 });

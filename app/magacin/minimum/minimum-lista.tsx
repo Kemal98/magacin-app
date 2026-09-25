@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { poklapa } from "@/lib/pretraga";
 import { postaviMinimum } from "@/app/actions/minimum";
 import { kolicina as fmt } from "@/lib/format";
 
@@ -8,7 +9,7 @@ type Artikal = { id: string; naziv: string; mjera: string; kolicina: number; min
 
 export function MinimumLista({ artikli }: { artikli: Artikal[] }) {
   const [trazi, setTrazi] = useState("");
-  const vidljivi = artikli.filter((a) => a.naziv.toLowerCase().includes(trazi.trim().toLowerCase()));
+  const vidljivi = artikli.filter((a) => poklapa(a.naziv, trazi));
   return (
     <div className="flex flex-col gap-4">
       <input

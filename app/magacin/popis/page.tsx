@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { PopisiPrikaz } from "@/app/_components/popisi-prikaz";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
@@ -46,7 +47,9 @@ export default async function PopisStranica({
       <PopisForma artikli={artikli} />
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Zadnji popisi</h2>
-        <PopisiPrikaz popisi={popisi} />
+        <PretragaListe placeholder="Traži osobu, artikal…">
+          <PopisiPrikaz popisi={popisi} />
+        </PretragaListe>
       </section>
     </Okvir>
   );

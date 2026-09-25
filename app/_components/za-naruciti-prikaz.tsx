@@ -10,6 +10,7 @@ export function ZaNarucitiPrikaz({ artikli }: { artikli: ZaNaruciti[] }) {
     <ul className="flex flex-col gap-3">
       {artikli.map((a) => (
         <li
+          data-red
           key={a.artikal_id}
           className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-red-300 bg-red-50 p-4"
         >

@@ -1,4 +1,5 @@
 import { Okvir } from "@/app/_components/okvir";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { RazlikePrikaz } from "@/app/_components/razlike-prikaz";
 import { ZahtjevKartica } from "@/app/_components/zahtjev-prikaz";
@@ -29,7 +30,8 @@ export default async function ZahtjeviStranica() {
       <Osvjezavac />
       <Nazad href="/magacin" />
 
-      <section className="flex flex-col gap-3">
+      <PretragaListe placeholder="Traži objekat, artikal, osobu…" grupa="[data-grupa]">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Čekaju odluku ({naCekanju.length})</h2>
         {poRedu.length === 0 ? (
           <p className="text-xl text-zinc-500">Nema novih zahtjeva.</p>
@@ -42,7 +44,7 @@ export default async function ZahtjeviStranica() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Odobreni, čekaju izdavanje ({zaIzdavanje.length})</h2>
         {zaIzdavanjePoRedu.length === 0 ? (
           <p className="text-xl text-zinc-500">Nema odobrenih zahtjeva za izdavanje.</p>
@@ -55,7 +57,7 @@ export default async function ZahtjeviStranica() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Na dostavi ({naDostavi.length})</h2>
         {naDostavi.length === 0 ? (
           <p className="text-xl text-zinc-500">Nema robe na putu.</p>
@@ -68,12 +70,12 @@ export default async function ZahtjeviStranica() {
         )}
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Razlike pri prijemu ({razlike.length})</h2>
         <RazlikePrikaz razlike={razlike} />
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section data-grupa className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Zadnje završeni (primljeni i odbijeni)</h2>
         {obradeni.length === 0 ? (
           <p className="text-xl text-zinc-500">Još nema obrađenih zahtjeva.</p>
@@ -85,6 +87,7 @@ export default async function ZahtjeviStranica() {
           </ul>
         )}
       </section>
+      </PretragaListe>
     </Okvir>
   );
 }

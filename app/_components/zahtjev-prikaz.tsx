@@ -26,7 +26,7 @@ export function kolicinaTekst(kol: number, osnovna: number, s: StavkaZahtjeva): 
 /** Zahtjev bez radnji: ko, kada, stavke i (ako je odlučeno) odobrene količine ili razlog odbijanja. */
 export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaziObjekat?: boolean }) {
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border border-zinc-300 p-4 shadow-sm bg-white">
+    <li data-red className="flex flex-col gap-3 rounded-2xl border border-zinc-300 p-4 shadow-sm bg-white">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           {pokaziObjekat && <p className="text-2xl font-bold">{z.objekat}</p>}

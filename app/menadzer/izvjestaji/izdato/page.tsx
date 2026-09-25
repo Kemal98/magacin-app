@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { IzvozDugme } from "@/app/_components/izvoz-dugme";
 import { Okvir } from "@/app/_components/okvir";
 import { km, kolicina as fmt } from "@/lib/format";
@@ -38,8 +39,9 @@ export default async function IzdatoStranica({
       {redovi.length === 0 ? (
         <p className="text-xl text-zinc-500">Nema podataka za izabrani period i objekat.</p>
       ) : (
-        poObjektu(redovi).map((g) => (
-          <section key={g.objekat_id} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+        <PretragaListe placeholder="Traži objekat ili artikal…" grupa="[data-grupa]">
+        {poObjektu(redovi).map((g) => (
+          <section data-grupa key={g.objekat_id} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="text-2xl font-bold">{g.objekat}</h2>
               <p className="text-lg text-zinc-600">Izdato u vrijednosti {km(g.zbir.vrijednost_izdatog)}</p>
@@ -58,7 +60,7 @@ export default async function IzdatoStranica({
                 {[...g.redovi]
                   .sort((a, b) => a.artikal.localeCompare(b.artikal, "bs"))
                   .map((r) => (
-                    <tr key={r.artikal_id} className="border-b border-zinc-200 align-top">
+                    <tr data-red data-trazi={`${g.objekat} ${r.artikal}`} key={r.artikal_id} className="border-b border-zinc-200 align-top">
                       <td className="py-1">
                         {r.artikal}
                         {(r.izuzeci > 0 || r.manjak > 0 || r.visak > 0) && (
@@ -86,7 +88,8 @@ export default async function IzdatoStranica({
               </tbody>
             </table>
           </section>
-        ))
+        ))}
+        </PretragaListe>
       )}
     </Okvir>
   );

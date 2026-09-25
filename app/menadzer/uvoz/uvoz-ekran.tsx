@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { useActionState } from "react";
 import { pripremiPregled, potvrdiUvoz } from "@/app/actions/uvoz";
 import type { PripremljenUvoz } from "@/lib/uvoz/pripremi";
@@ -83,9 +84,10 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
         <p className="text-lg text-zinc-600">
           Ovo je prijedlog po nazivu. Ispravite gdje nije tačno; kasnije se može mijenjati u šifrarniku.
         </p>
+        <PretragaListe placeholder="Traži artikal u pregledu…">
         <ul className="flex flex-col gap-2">
           {pregled.artikli.map((a, i) => (
-            <li key={a.naziv} className="flex items-center justify-between gap-3 rounded-xl border-2 border-zinc-200 p-3 bg-white">
+            <li data-red data-trazi={`${a.naziv} ${a.mjera}`} key={a.naziv} className="flex items-center justify-between gap-3 rounded-xl border-2 border-zinc-200 p-3 bg-white">
               <span className="text-lg">
                 {a.naziv} <span className="text-zinc-500">({a.mjera})</span>
               </span>
@@ -101,6 +103,7 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
             </li>
           ))}
         </ul>
+        </PretragaListe>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">

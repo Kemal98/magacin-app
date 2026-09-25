@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { OtpisiPrikaz } from "@/app/_components/otpis-prikaz";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
@@ -58,7 +59,9 @@ export default async function OtpisStranica({
       <OtpisForma artikli={artikli} />
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Zadnji otpisi</h2>
-        <OtpisiPrikaz otpisi={otpisi} />
+        <PretragaListe placeholder="Traži artikal, razlog, osobu…">
+          <OtpisiPrikaz otpisi={otpisi} />
+        </PretragaListe>
       </section>
     </Okvir>
   );

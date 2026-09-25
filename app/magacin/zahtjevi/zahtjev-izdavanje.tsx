@@ -58,7 +58,7 @@ export function ZahtjevIzdavanje({ z }: { z: Zahtjev }) {
   const prilagodjeno = z.stavke.some((s) => kolikoIma(s, s.odobrena_kolicina ?? 0) < (s.odobrena_kolicina ?? 0));
 
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border border-green-700 bg-white p-4 shadow-sm">
+    <li data-red className="flex flex-col gap-4 rounded-2xl border border-green-700 bg-white p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-2xl font-bold">{z.objekat}</p>

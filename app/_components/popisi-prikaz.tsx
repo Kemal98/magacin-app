@@ -10,7 +10,7 @@ export function PopisiPrikaz({ popisi }: { popisi: PopisMagacina[] }) {
         const razlike = p.stavke.filter((s) => Number(s.razlika) !== 0);
         const vrijednost = Number(p.vrijednost_razlike);
         return (
-          <li key={p.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+          <li data-red key={p.id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <div>
                 <p className="text-xl font-bold">

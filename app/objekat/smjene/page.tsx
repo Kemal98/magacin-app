@@ -1,4 +1,5 @@
 import { Okvir } from "@/app/_components/okvir";
+import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { SmjenaKartica } from "@/app/_components/smjena-prikaz";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajSmjene } from "@/lib/smjene";
@@ -25,11 +26,13 @@ export default async function PrethodneSmjeneStranica({
       {smjene.length === 0 ? (
         <p className="text-xl text-zinc-500">Još nema zatvorenih smjena.</p>
       ) : (
-        <ul className="flex flex-col gap-4">
-          {smjene.map((s) => (
-            <SmjenaKartica key={s.id} s={s} />
-          ))}
-        </ul>
+        <PretragaListe placeholder="Traži smjenu, osobu, artikal…">
+          <ul className="flex flex-col gap-4">
+            {smjene.map((s) => (
+              <SmjenaKartica key={s.id} s={s} />
+            ))}
+          </ul>
+        </PretragaListe>
       )}
     </Okvir>
   );
