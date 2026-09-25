@@ -4,8 +4,8 @@
 
 **Blocked by:** 11 (Smjena i evidencija potrošnje)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Izdato, potrošeno i zaliha objekta prikazani zajedno po artiklu
-- [ ] Razlika je jednaka izdato minus potrošeno u istom periodu
-- [ ] Filtriranje po objektu i periodu
+- [x] Izdato, potrošeno i zaliha objekta prikazani zajedno po artiklu
+- [x] Razlika je jednaka izdato minus potrošeno u istom periodu
+- [x] Filtriranje po objektu i periodu
