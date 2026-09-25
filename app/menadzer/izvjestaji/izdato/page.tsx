@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { IzvozDugme } from "@/app/_components/izvoz-dugme";
 import { Okvir } from "@/app/_components/okvir";
 import { km, kolicina as fmt } from "@/lib/format";
 import { ucitajIzvjestaj, ucitajObjekte } from "@/lib/izvjestaji";
@@ -21,11 +22,13 @@ export default async function IzdatoStranica({
   const { od, do: kraj } = periodIzParametara(q.od, q.do, danasSarajevo());
   const objekat = q.objekat && UUID.test(q.objekat) ? q.objekat : undefined;
   const [redovi, objekti] = await Promise.all([ucitajIzvjestaj(od, kraj, objekat), ucitajObjekte()]);
+  const izvoz = `/izvoz/izvjestaj?od=${od}&do=${kraj}${objekat ? `&objekat=${objekat}` : ""}`;
 
   return (
     <Okvir korisnik={korisnik} naslov="Izvještaji">
       <Nazad href="/menadzer" />
       <IzvjestajKartice aktivno="izdato" od={od} do={kraj} objekat={objekat} />
+      <IzvozDugme href={izvoz} />
       <IzvjestajFilter putanja="/menadzer/izvjestaji/izdato" od={od} do={kraj} objekat={objekat} objekti={objekti} />
       <p className="text-lg text-zinc-600">
         Razlika je izdato minus potrošeno u izabranom periodu. Zaliha objekta je stanje sada (izdata roba koja još nije

@@ -4,8 +4,8 @@
 
 **Blocked by:** 17 (Izvještaj: trošak i potrošnja), 18 (Pregled: izdato, potrošeno, zaliha objekta), 05 (Prijem robe i stanje magacina)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Izvoz stanja magacina s vrijednošću
-- [ ] Izvoz izvještaja troška i potrošnje i pregleda izdato/potrošeno
-- [ ] Izvezeni brojevi odgovaraju prikazanim na ekranu
+- [x] Izvoz stanja magacina s vrijednošću
+- [x] Izvoz izvještaja troška i potrošnje i pregleda izdato/potrošeno
+- [x] Izvezeni brojevi odgovaraju prikazanim na ekranu

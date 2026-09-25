@@ -1,4 +1,5 @@
 import { Nazad } from "@/app/_components/nazad";
+import { IzvozDugme } from "@/app/_components/izvoz-dugme";
 import { Okvir } from "@/app/_components/okvir";
 import { km, kolicina as fmt } from "@/lib/format";
 import { ucitajIzvjestaj, ucitajObjekte } from "@/lib/izvjestaji";
@@ -21,6 +22,7 @@ export default async function TrosakStranica({
   const { od, do: kraj } = periodIzParametara(q.od, q.do, danasSarajevo());
   const objekat = q.objekat && UUID.test(q.objekat) ? q.objekat : undefined;
   const [redovi, objekti] = await Promise.all([ucitajIzvjestaj(od, kraj, objekat), ucitajObjekte()]);
+  const izvoz = `/izvoz/izvjestaj?od=${od}&do=${kraj}${objekat ? `&objekat=${objekat}` : ""}`;
 
   const ukupno = zbir(redovi);
   const objekti_ = poObjektu(redovi);
@@ -30,6 +32,7 @@ export default async function TrosakStranica({
     <Okvir korisnik={korisnik} naslov="Izvještaji">
       <Nazad href="/menadzer" />
       <IzvjestajKartice aktivno="trosak" od={od} do={kraj} objekat={objekat} />
+      <IzvozDugme href={izvoz} />
       <IzvjestajFilter putanja="/menadzer/izvjestaji" od={od} do={kraj} objekat={objekat} objekti={objekti} />
 
       <section className="rounded-2xl border-2 border-brand bg-brand-soft p-4">

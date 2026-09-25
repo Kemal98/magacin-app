@@ -1,3 +1,4 @@
+import { IzvozDugme } from "@/app/_components/izvoz-dugme";
 import { Okvir } from "@/app/_components/okvir";
 import { ucitajStanje } from "@/app/_components/stanje-podaci";
 import { StanjeTabela } from "@/app/_components/stanje-tabela";
@@ -11,6 +12,7 @@ export default async function StanjeStranica() {
   return (
     <Okvir korisnik={korisnik} naslov="Stanje magacina prehrane">
       <Nazad href="/menadzer" />
+      <IzvozDugme href="/izvoz/stanje" />
       <StanjeTabela redovi={await ucitajStanje()} />
     </Okvir>
   );
