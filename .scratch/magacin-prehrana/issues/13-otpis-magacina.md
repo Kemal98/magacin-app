@@ -4,9 +4,9 @@
 
 **Blocked by:** 05 (Prijem robe i stanje magacina)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Otpis skida zalihu magacina i traži razlog
-- [ ] Otpis iznad stanja se odbija
-- [ ] Otpis je vidljiv menadžeru odmah, s imenom osobe i vremenom
-- [ ] Vrijednost otpisa računa se po prosječnoj cijeni
+- [x] Otpis skida zalihu magacina i traži razlog
+- [x] Otpis iznad stanja se odbija
+- [x] Otpis je vidljiv menadžeru odmah, s imenom osobe i vremenom
+- [x] Vrijednost otpisa računa se po prosječnoj cijeni

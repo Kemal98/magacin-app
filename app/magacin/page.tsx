@@ -21,6 +21,7 @@ export default async function MagacinPocetna() {
           znacka={naCekanju}
         />
         <Plocica href="/magacin/prijem" naslov="Prijem robe" opis="Unos robe od dobavljača" ikona="paket" />
+        <Plocica href="/magacin/otpis" naslov="Otpis robe" opis="Kvar, istek roka, lomljenje" ikona="upozorenje" />
         <Plocica href="/magacin/stanje" naslov="Stanje magacina" opis="Količine i vrijednost po artiklu" ikona="stanje" />
       </nav>
     </Okvir>

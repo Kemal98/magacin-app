@@ -13,6 +13,7 @@ export default async function MenadzerPocetna() {
         <nav className="grid gap-4 sm:grid-cols-2">
           <Plocica href="/menadzer/smjene" naslov="Smjene i potrošnja" opis="Trošak po smjeni, upozorenja" ikona="sat" />
           <Plocica href="/menadzer/razlike" naslov="Razlike pri prijemu" opis="Poslano i stiglo se ne poklapa" ikona="upozorenje" />
+          <Plocica href="/menadzer/otpis" naslov="Otpis magacina" opis="Šta je i zašto otpisano" ikona="upozorenje" />
           <Plocica href="/menadzer/stanje" naslov="Stanje magacina" opis="Količine i vrijednost zaliha" ikona="stanje" />
         </nav>
       </section>
