@@ -4,9 +4,9 @@
 
 **Blocked by:** 02 (Prijava i uloge)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Artikal ima jednu osnovnu mjeru i nula ili više pakovanja s faktorom (1 kutija = 10 kg)
-- [ ] Bar kod je jedinstven po artiklu
-- [ ] Objekti i dobavljači se mogu dodati i isključiti
-- [ ] Samo menadžer može mijenjati šifrarnik
+- [x] Artikal ima jednu osnovnu mjeru i nula ili više pakovanja s faktorom (1 kutija = 10 kg)
+- [x] Bar kod je jedinstven po artiklu
+- [x] Objekti i dobavljači se mogu dodati i isključiti
+- [x] Samo menadžer može mijenjati šifrarnik
