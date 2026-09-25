@@ -4,9 +4,9 @@
 
 **Blocked by:** 05 (Prijem robe i stanje magacina), 06 (Skener bar koda)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Razlika po artiklu prikazana prije potvrde
-- [ ] Potvrda usklađuje stanje u sistemu s brojanim
-- [ ] Popis i razlike se bilježe s imenom osobe i vremenom
-- [ ] Popis može poslužiti i kao početno stanje na dan početka rada
+- [x] Razlika po artiklu prikazana prije potvrde
+- [x] Potvrda usklađuje stanje u sistemu s brojanim
+- [x] Popis i razlike se bilježe s imenom osobe i vremenom
+- [x] Popis može poslužiti i kao početno stanje na dan početka rada

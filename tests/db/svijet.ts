@@ -10,6 +10,7 @@ export type Svijet = {
   cokolada: string;
   mlijeko: string;
   brasno: string;
+  secer: string;
   dobavljac: string;
   sankOsoblje: string;
   kuhinjaOsoblje: string;
@@ -37,13 +38,14 @@ export async function pripremi(db: Client): Promise<Svijet> {
   const cokolada = await artikal("Topla čokolada", "kg");
   const mlijeko = await artikal("Mlijeko", "l");
   const brasno = await artikal("Brašno", "kg");
+  const secer = await artikal("Šećer", "kg");
   const dobavljac = (await db.query("select magacin.sacuvaj_dobavljaca(null, 'Pekara') as id")).rows[0].id as string;
   const kutija = (await db.query("select id from magacin.pakovanje where artikal_id = $1", [kafa])).rows[0].id as string;
   await db.query("select magacin.postavi_artikle_objekta($1, $2::uuid[])", [sank, [kafa, cokolada, mlijeko]]);
   await db.query("select magacin.postavi_artikle_objekta($1, $2::uuid[])", [kuhinja, [brasno]]);
   await db.query("reset role");
   return {
-    sank, kuhinja, kafa, kutija, cokolada, mlijeko, brasno, dobavljac, sef,
+    sank, kuhinja, kafa, kutija, cokolada, mlijeko, brasno, secer, dobavljac, sef,
     sankOsoblje: await napraviKorisnika(db, { ime: "Šank osoblje", uloga: "objekat", objekatId: sank }),
     kuhinjaOsoblje: await napraviKorisnika(db, { ime: "Kuhinja osoblje", uloga: "objekat", objekatId: kuhinja }),
     magacioner: await napraviKorisnika(db, { ime: "Amra", uloga: "magacioner" }),
