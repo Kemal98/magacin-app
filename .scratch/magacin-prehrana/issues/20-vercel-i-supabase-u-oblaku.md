@@ -10,3 +10,5 @@
 - [ ] Supabase projekat u oblaku s primijenjenim migracijama
 - [ ] Tablet u magacinu i tablet u ŠANK HOTEL vide iste podatke u realnom vremenu
 - [ ] Ključevi i lozinke nisu u repozitoriju (samo u okruženju)
+- [ ] U Supabase projektu u oblaku je javna registracija isključena (Authentication → Sign In / Providers → "Allow new users to sign up" isključeno), kao i u lokalnoj konfiguraciji
+- [ ] Šema `magacin` je izložena kroz API u oblaku (Settings → API → Exposed schemas)

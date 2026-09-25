@@ -12,6 +12,7 @@ Potrebno: Node i **Docker Desktop** (mora biti pokrenut).
 
 ```bash
 npm install
+cp .env.example .env.local   # zatim upiši PUBLISHABLE_KEY iz `npx supabase status -o env`
 npm run db:start     # pokreće lokalnu bazu (prvi put preuzima slike, traje nekoliko minuta)
 npm run db:reset     # primjenjuje sve migracije od nule
 npm test             # testovi kroz seam u bazi
@@ -19,6 +20,10 @@ npm run typecheck    # provjera tipova
 npm run dev          # aplikacija na http://localhost:3000
 npm run db:stop      # gasi lokalnu bazu
 ```
+
+Razvojni korisnici (samo lokalno, iz `supabase/seed.sql`): menadžer `menadzer@magacin.local` /
+`menadzer123`, "Test Magacioner" PIN `111111`, "ŠANK HOTEL (test)" PIN `222222`.
+Nakon `npm run db:reset` seed se ponovo primijeni.
 
 Lokalna baza: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
 (može se promijeniti varijablom `DATABASE_URL`).

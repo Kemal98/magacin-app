@@ -4,9 +4,9 @@
 
 **Blocked by:** 01 (Kostur: lokalna baza, migracije i test okvir)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Magacioner i objekat: izbor imena + PIN; menadžer: lozinka
-- [ ] Svaka uloga vidi samo svoj ekran; pristup tuđim ekranima nije moguć
-- [ ] Ime i vrijeme osobe dostupni su svakoj kasnijoj operaciji u bazi
-- [ ] Testovi provjeravaju da uloga ne može pozivati operacije koje joj ne pripadaju
+- [x] Magacioner i objekat: izbor imena + PIN; menadžer: lozinka
+- [x] Svaka uloga vidi samo svoj ekran; pristup tuđim ekranima nije moguć
+- [x] Ime i vrijeme osobe dostupni su svakoj kasnijoj operaciji u bazi
+- [x] Testovi provjeravaju da uloga ne može pozivati operacije koje joj ne pripadaju
