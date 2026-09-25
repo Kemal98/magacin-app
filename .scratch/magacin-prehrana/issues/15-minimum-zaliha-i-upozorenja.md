@@ -4,9 +4,9 @@
 
 **Blocked by:** 05 (Prijem robe i stanje magacina)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Minimum se zadaje i mijenja po artiklu
-- [ ] Artikal ispod minimuma je označen crveno u pregledu stanja
-- [ ] Postoji popis svih artikala ispod minimuma
-- [ ] Upozorenje se vidi samo u magacinu i menadžeru, ne objektima
+- [x] Minimum se zadaje i mijenja po artiklu
+- [x] Artikal ispod minimuma je označen crveno u pregledu stanja
+- [x] Postoji popis svih artikala ispod minimuma
+- [x] Upozorenje se vidi samo u magacinu i menadžeru, ne objektima

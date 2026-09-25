@@ -8,6 +8,8 @@ type RedIzBaze = {
   kolicina: string | number;
   prosjecna_cijena: string | number;
   vrijednost: string | number;
+  minimum: string | number;
+  ispod_minimuma: boolean;
 };
 
 /** Stanje magacina prehrane iz baze, spremno za prikaz. */
@@ -22,5 +24,7 @@ export async function ucitajStanje(): Promise<RedStanja[]> {
     kolicina: Number(r.kolicina),
     prosjecna_cijena: Number(r.prosjecna_cijena),
     vrijednost: Number(r.vrijednost),
+    minimum: Number(r.minimum),
+    ispod_minimuma: r.ispod_minimuma,
   }));
 }

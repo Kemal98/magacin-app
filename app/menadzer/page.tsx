@@ -1,16 +1,25 @@
 import { Okvir } from "@/app/_components/okvir";
 import { Plocica } from "@/app/_components/plocica";
 import { zahtijevajUlogu } from "@/lib/korisnik";
+import { ucitajIspodMinimuma } from "@/lib/minimum";
 
 export const metadata = { title: "Menadžer" };
 
 export default async function MenadzerPocetna() {
   const korisnik = await zahtijevajUlogu("menadzer");
+  const ispodMinimuma = (await ucitajIspodMinimuma()).length;
   return (
     <Okvir korisnik={korisnik} naslov="Pregled">
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold text-zinc-500">Nadzor</h2>
         <nav className="grid gap-4 sm:grid-cols-2">
+          <Plocica
+            href="/menadzer/naruciti"
+            naslov="Za naručivanje"
+            opis="Artikli ispod minimuma"
+            ikona="upozorenje"
+            znacka={ispodMinimuma}
+          />
           <Plocica href="/menadzer/smjene" naslov="Smjene i potrošnja" opis="Trošak po smjeni, upozorenja" ikona="sat" />
           <Plocica href="/menadzer/razlike" naslov="Razlike pri prijemu" opis="Poslano i stiglo se ne poklapa" ikona="upozorenje" />
           <Plocica href="/menadzer/popisi" naslov="Popisi magacina" opis="Razlike brojanog i sistemskog" ikona="zahtjevi" />
