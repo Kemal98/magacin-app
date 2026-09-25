@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Magacin sportskog centra
 
-## Getting Started
+Aplikacija za evidenciju robe i troškova (magacin prehrane, prvi objekat ŠANK HOTEL).
+Rječnik pojmova je u [CONTEXT.md](CONTEXT.md), specifikacija i zadaci u `.scratch/magacin-prehrana/`.
 
-First, run the development server:
+Poslovna pravila žive u bazi (Supabase/Postgres) kao operacije u šemi `magacin`,
+a testovi ih pozivaju direktno na lokalnoj bazi.
+
+## Pokretanje razvoja
+
+Potrebno: Node i **Docker Desktop** (mora biti pokrenut).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run db:start     # pokreće lokalnu bazu (prvi put preuzima slike, traje nekoliko minuta)
+npm run db:reset     # primjenjuje sve migracije od nule
+npm test             # testovi kroz seam u bazi
+npm run typecheck    # provjera tipova
+npm run dev          # aplikacija na http://localhost:3000
+npm run db:stop      # gasi lokalnu bazu
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Lokalna baza: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
+(može se promijeniti varijablom `DATABASE_URL`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Migracije
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Nove migracije: `npx supabase migration new <naziv>`, zatim `npm run db:reset`.
+Svaka operacija magacina ide u šemu `magacin` kao funkcija i dobija test u `tests/db/`.
 
-## Learn More
+Ako `docker` nije u PATH-u, dodaj `/Applications/Docker.app/Contents/Resources/bin`.
 
-To learn more about Next.js, take a look at the following resources:
+## Napomena o lokalnom Supabaseu
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`db:start` trenutno pokreće samo bazu (bez API gatewaya, prijave i ostalih servisa), jer je to dovoljno
+za testove poslovnih pravila. Slika `kong` nema arm64 verziju i ne radi na Apple Silicon Macu bez
+Rosetta emulacije (Docker Desktop → Settings → General → "Use Rosetta"). Kad zatrebaju prijava i API
+(zadatak 02), treba to riješiti i ukloniti isključene servise iz skripte `db:start`.
