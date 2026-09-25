@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { zahtijevajUlogu } from "@/lib/korisnik";
+import { jeDatum } from "@/lib/period";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 
 export type StanjePrijema = { greska?: string } | undefined;
@@ -42,8 +43,18 @@ export async function unesiPrijem(_stanje: StanjePrijema, forma: FormData): Prom
   }
   if (stavke.length === 0) return { greska: "Dodajte bar jedan artikal." };
 
+  // Podaci o isporuci (nije obavezno): kad je roba stigla, broj otpremnice ili računa i napomena.
+  const datum = String(forma.get("datum") ?? "").trim();
+  if (datum && !jeDatum(datum)) return { greska: "Datum isporuke nije ispravan." };
+
   const supabase = await napraviServerKlijent();
-  const { error } = await supabase.rpc("unesi_prijem", { p_dobavljac: dobavljac, p_stavke: stavke });
+  const { error } = await supabase.rpc("unesi_prijem", {
+    p_dobavljac: dobavljac,
+    p_stavke: stavke,
+    p_dokument: String(forma.get("dokument") ?? ""),
+    p_napomena: String(forma.get("napomena") ?? ""),
+    p_datum: datum || null,
+  });
   if (error) {
     return {
       greska: error.code && PORUKE_ZA_KORISNIKA.has(error.code) ? error.message : "Prijem nije snimljen. Pokušajte ponovo.",

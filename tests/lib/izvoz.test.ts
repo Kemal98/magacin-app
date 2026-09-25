@@ -187,3 +187,71 @@ describe("izvoz izvještaja", () => {
     expect(Number(s[s.length - 1].H)).toBe(0);
   });
 });
+
+import { nabavkaUListove } from "../../lib/izvoz";
+import type { ArtikalDobavljaca, DobavljacNabavka, Isporuka } from "../../lib/nabavka-tipovi";
+
+const dobavljac: DobavljacNabavka = {
+  dobavljac_id: "d1", naziv: "Pekara Mlin", aktivan: true, broj_isporuka: 2, ukupna_vrijednost: 60.005,
+  prosjecna_vrijednost: 30.0025, prosjecan_razmak_dana: 4.55, zadnja_isporuka: "2026-09-24", stornirano: 1,
+};
+const prazan: DobavljacNabavka = { ...dobavljac, dobavljac_id: "d2", naziv: "Mesnica", broj_isporuka: 0, ukupna_vrijednost: 0, prosjecna_vrijednost: 0, prosjecan_razmak_dana: null, zadnja_isporuka: null, stornirano: 0 };
+const isporuke: Isporuka[] = [
+  {
+    id: "i1", datum_isporuke: "2026-09-24", vrijeme: "2026-09-25T08:30:00+02:00", dokument: "OTP-1", napomena: "Došlo kamionom",
+    ime: "Amra", vrijednost: 40, razmak_dana: 5, stornirano: false, storno_razlog: null, storno_ime: null, storno_vrijeme: null,
+    stavke: [
+      { artikal: "Brašno", mjera: "kg", kolicina: 30, cijena: 1, vrijednost: 30, pakovanje: "vreća", kolicina_pakovanja: 1.2 },
+      { artikal: "Kvasac", mjera: "kg", kolicina: 2, cijena: 5, vrijednost: 10, pakovanje: null, kolicina_pakovanja: null },
+    ],
+  },
+  {
+    id: "i2", datum_isporuke: "2026-09-19", vrijeme: "2026-09-19T09:00:00+02:00", dokument: null, napomena: null,
+    ime: "Amra", vrijednost: 99, razmak_dana: null, stornirano: true, storno_razlog: "Uneseno dvaput", storno_ime: "Šef", storno_vrijeme: "2026-09-20T10:00:00+02:00",
+    stavke: [{ artikal: "Brašno", mjera: "kg", kolicina: 99, cijena: 1, vrijednost: 99, pakovanje: null, kolicina_pakovanja: null }],
+  },
+];
+const artikli: ArtikalDobavljaca[] = [
+  { artikal_id: "a1", artikal: "Brašno", mjera: "kg", broj_isporuka: 2, kolicina: 60, vrijednost: 55, zadnja_cijena: 1, najnizja_cijena: 0.9, najvisa_cijena: 1.1, prosjecna_cijena: 0.9167, zadnja_isporuka: "2026-09-24" },
+];
+
+describe("izvoz nabavke", () => {
+  const t = () => {
+    const l = nabavkaUListove(
+      [{ dobavljac, isporuke, artikli }, { dobavljac: prazan, isporuke: [], artikli: [] }],
+      { od: "2026-06-28", do: "2026-09-25", objekat: "Svi dobavljači", izvezao: "Šef", izvezeno: "2026-09-25" },
+    );
+    return procitajTabele(napraviXlsx(l), l.map((x) => x.naziv));
+  };
+
+  it("pregled dobavljača: isporuke, vrijednost, razmak, zadnji dolazak i ukupno", () => {
+    const s = t().Dobavljači;
+    expect(s[1]).toMatchObject({ A: "Pekara Mlin", B: "2", C: "60.01", E: "4.6", F: "2026-09-24", G: "1" });
+    expect(s[2]).toMatchObject({ A: "Mesnica", B: "0", C: "0" });
+    expect(s[2].E).toBeUndefined(); // bez prosjeka
+    const zbir = s[s.length - 1];
+    expect(zbir.A).toBe("UKUPNO");
+    expect(Number(zbir.B)).toBe(2);
+    expect(Number(zbir.C)).toBe(60.01);
+  });
+
+  it("isporuke: jedan red po stavci, s dokumentom, primaocem i statusom (poništene su označene)", () => {
+    const s = t().Isporuke;
+    expect(s).toHaveLength(1 + 3);
+    const brasno = s.find((r) => r.D === "Brašno" && r.L === "važi")!;
+    expect(brasno).toMatchObject({ A: "2026-09-24", B: "Pekara Mlin", C: "OTP-1", E: "kg", F: "30", G: "1", H: "30", I: "Amra", K: "Došlo kamionom" });
+    const ponisteno = s.find((r) => r.L?.startsWith("PONIŠTENO"))!;
+    expect(ponisteno.L).toBe("PONIŠTENO: Uneseno dvaput");
+    expect(ponisteno.A).toBe("2026-09-19");
+  });
+
+  it("artikli po dobavljaču s cijenama", () => {
+    const s = t()["Artikli po dobavljaču"];
+    expect(s[1]).toMatchObject({ A: "Pekara Mlin", B: "Brašno", D: "2", E: "60", F: "55", G: "1", H: "0.9", I: "1.1", J: "0.92" });
+  });
+
+  it("list Podaci navodi period i ko je izvezao", () => {
+    const mapa = Object.fromEntries(t().Podaci.map((r) => [r.A, r.B]));
+    expect(mapa).toMatchObject({ Od: "2026-06-28", Do: "2026-09-25", Dobavljač: "Svi dobavljači", Izvezao: "Šef" });
+  });
+});

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { danasSarajevo, jeDatum, period, periodIzParametara } from "../../lib/period";
+import { daniOd, danasSarajevo, jeDatum, ovaGodina, period, periodIzParametara, sveVrijeme, zadnjihDana } from "../../lib/period";
 import { poArtiklu, poObjektu, ukupanTrosak, zbir, type RedIzvjestaja } from "../../lib/izvjestaji-tipovi";
 
 describe("periodi", () => {
@@ -41,6 +41,31 @@ describe("periodi", () => {
     expect(periodIzParametara("2026-09-10", "2026-09-01", "2026-09-25")).toEqual({ od: "2026-09-01", do: "2026-09-30" });
     expect(periodIzParametara(undefined, undefined, "2026-09-25")).toEqual({ od: "2026-09-01", do: "2026-09-30" });
     expect(periodIzParametara("x", "y", "2026-09-25")).toEqual({ od: "2026-09-01", do: "2026-09-30" });
+  });
+});
+
+describe("dodatni periodi", () => {
+  it("zadnjih n dana, zaključno s danas", () => {
+    expect(zadnjihDana(90, "2026-09-25")).toEqual({ od: "2026-06-28", do: "2026-09-25" });
+    expect(zadnjihDana(1, "2026-09-25")).toEqual({ od: "2026-09-25", do: "2026-09-25" });
+    expect(zadnjihDana(30, "2026-03-05")).toEqual({ od: "2026-02-04", do: "2026-03-05" });
+  });
+
+  it("ova godina i cijela historija", () => {
+    expect(ovaGodina("2026-09-25")).toEqual({ od: "2026-01-01", do: "2026-09-25" });
+    expect(sveVrijeme("2026-09-25")).toEqual({ od: "2000-01-01", do: "2026-09-25" });
+  });
+
+  it("zadani period se koristi kad je unos neispravan", () => {
+    const zadano = zadnjihDana(90, "2026-09-25");
+    expect(periodIzParametara(undefined, undefined, "2026-09-25", zadano)).toEqual(zadano);
+    expect(periodIzParametara("2026-09-01", "2026-09-10", "2026-09-25", zadano)).toEqual({ od: "2026-09-01", do: "2026-09-10" });
+  });
+
+  it("broj dana od datuma do danas", () => {
+    expect(daniOd("2026-09-25", "2026-09-25")).toBe(0);
+    expect(daniOd("2026-09-15", "2026-09-25")).toBe(10);
+    expect(daniOd("2026-02-27", "2026-03-02")).toBe(3);
   });
 });
 

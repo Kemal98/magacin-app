@@ -22,6 +22,7 @@ export default async function MenadzerPocetna() {
           />
           <Plocica href="/menadzer/izvjestaji" naslov="Izvještaji" opis="Trošak, potrošnja, izdato po objektu i periodu" ikona="stanje" />
           <Plocica href="/menadzer/smjene" naslov="Smjene i potrošnja" opis="Trošak po smjeni, upozorenja" ikona="sat" />
+          <Plocica href="/menadzer/nabavka" naslov="Nabavka" opis="Dobavljači: koliko dolaze, šta i po kojoj cijeni" ikona="dobavljaci" />
           <Plocica href="/menadzer/razlike" naslov="Razlike pri prijemu" opis="Poslano i stiglo se ne poklapa" ikona="upozorenje" />
           <Plocica href="/menadzer/popisi" naslov="Popisi magacina" opis="Razlike brojanog i sistemskog" ikona="zahtjevi" />
           <Plocica href="/menadzer/storno" naslov="Storno" opis="Poništi pogrešan prijem, izdavanje, otpis" ikona="nazad" />

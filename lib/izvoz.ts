@@ -1,6 +1,7 @@
 import type { RedStanja } from "@/app/_components/stanje-tabela";
 import { poArtiklu, poObjektu, ukupanTrosak, zbir, type RedIzvjestaja } from "@/lib/izvjestaji-tipovi";
 import type { ZaNaruciti } from "@/lib/minimum";
+import type { ArtikalDobavljaca, DobavljacNabavka, Isporuka } from "@/lib/nabavka-tipovi";
 import type { List } from "@/lib/xlsx-pisanje";
 
 export const XLSX_TIP = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -123,6 +124,114 @@ export function izvjestajUListove(redovi: RedIzvjestaja[], podaci: PodaciIzvoza)
         ["Izvezao", podaci.izvezao],
         ["Izvezeno", podaci.izvezeno],
         ["Napomena", "Iznosi su u KM bez PDV-a, po cijeni pri izdavanju."],
+      ],
+    },
+  ];
+}
+
+export type NabavkaDobavljaca = {
+  dobavljac: DobavljacNabavka;
+  isporuke: Isporuka[];
+  artikli: ArtikalDobavljaca[];
+};
+
+/** Nabavka po dobavljačima: pregled, sve isporuke (jedan red po stavci) i artikli s cijenama. */
+export function nabavkaUListove(dobavljaci: NabavkaDobavljaca[], podaci: PodaciIzvoza): List[] {
+  const ukupno = dobavljaci.reduce((z, d) => z + d.dobavljac.ukupna_vrijednost, 0);
+  const brojIsporuka = dobavljaci.reduce((z, d) => z + d.dobavljac.broj_isporuka, 0);
+  return [
+    {
+      naziv: "Dobavljači",
+      kolone: [
+        { naslov: "Dobavljač", tip: "tekst", sirina: 34 },
+        { naslov: "Isporuka", tip: "broj" },
+        { naslov: "Ukupna vrijednost (KM)", tip: "km", sirina: 24 },
+        { naslov: "Prosječna vrijednost po isporuci (KM)", tip: "km", sirina: 36 },
+        { naslov: "Prosječan razmak (dana)", tip: "kolicina", sirina: 24 },
+        { naslov: "Zadnja isporuka", tip: "tekst", sirina: 18 },
+        { naslov: "Poništenih isporuka", tip: "broj", sirina: 20 },
+      ],
+      redovi: dobavljaci.map(({ dobavljac: d }) => [
+        d.naziv,
+        d.broj_isporuka,
+        d.ukupna_vrijednost,
+        d.prosjecna_vrijednost,
+        d.prosjecan_razmak_dana === null ? null : Math.round(d.prosjecan_razmak_dana * 10) / 10,
+        d.zadnja_isporuka,
+        d.stornirano,
+      ]),
+      zbir: ["UKUPNO", brojIsporuka, ukupno, null, null, null, null],
+    },
+    {
+      naziv: "Isporuke",
+      kolone: [
+        { naslov: "Datum isporuke", tip: "tekst", sirina: 16 },
+        { naslov: "Dobavljač", tip: "tekst", sirina: 30 },
+        { naslov: "Otpremnica/račun", tip: "tekst", sirina: 20 },
+        { naslov: "Artikal", tip: "tekst", sirina: 40 },
+        { naslov: "Mjera", tip: "tekst", sirina: 8 },
+        { naslov: "Količina", tip: "kolicina" },
+        { naslov: "Cijena po mjeri (KM)", tip: "km", sirina: 22 },
+        { naslov: "Vrijednost (KM)", tip: "km" },
+        { naslov: "Primio", tip: "tekst", sirina: 22 },
+        { naslov: "Uneseno", tip: "tekst", sirina: 20 },
+        { naslov: "Napomena", tip: "tekst", sirina: 40 },
+        { naslov: "Status", tip: "tekst", sirina: 34 },
+      ],
+      redovi: dobavljaci.flatMap(({ dobavljac: d, isporuke }) =>
+        isporuke.flatMap((i) =>
+          i.stavke.map((s) => [
+            i.datum_isporuke.slice(0, 10),
+            d.naziv,
+            i.dokument,
+            s.artikal,
+            s.mjera,
+            s.kolicina,
+            s.cijena,
+            s.vrijednost,
+            i.ime,
+            i.vrijeme.slice(0, 16).replace("T", " "),
+            i.napomena,
+            i.stornirano ? `PONIŠTENO: ${i.storno_razlog ?? ""}` : "važi",
+          ]),
+        ),
+      ),
+    },
+    {
+      naziv: "Artikli po dobavljaču",
+      kolone: [
+        { naslov: "Dobavljač", tip: "tekst", sirina: 30 },
+        { naslov: "Artikal", tip: "tekst", sirina: 40 },
+        { naslov: "Mjera", tip: "tekst", sirina: 8 },
+        { naslov: "Isporuka", tip: "broj" },
+        { naslov: "Količina", tip: "kolicina" },
+        { naslov: "Vrijednost (KM)", tip: "km" },
+        { naslov: "Zadnja cijena (KM)", tip: "km", sirina: 20 },
+        { naslov: "Najniža cijena (KM)", tip: "km", sirina: 22 },
+        { naslov: "Najviša cijena (KM)", tip: "km", sirina: 22 },
+        { naslov: "Prosječna cijena (KM)", tip: "km", sirina: 22 },
+        { naslov: "Zadnja isporuka", tip: "tekst", sirina: 16 },
+      ],
+      redovi: dobavljaci.flatMap(({ dobavljac: d, artikli }) =>
+        artikli.map((a) => [
+          d.naziv, a.artikal, a.mjera, a.broj_isporuka, a.kolicina, a.vrijednost, a.zadnja_cijena,
+          a.najnizja_cijena, a.najvisa_cijena, a.prosjecna_cijena, a.zadnja_isporuka.slice(0, 10),
+        ]),
+      ),
+    },
+    {
+      naziv: "Podaci",
+      kolone: [
+        { naslov: "Stavka", tip: "tekst", sirina: 20 },
+        { naslov: "Vrijednost", tip: "tekst", sirina: 40 },
+      ],
+      redovi: [
+        ["Od", podaci.od],
+        ["Do", podaci.do],
+        ["Dobavljač", podaci.objekat],
+        ["Izvezao", podaci.izvezao],
+        ["Izvezeno", podaci.izvezeno],
+        ["Napomena", "Poništeni prijemi se ne računaju u zbirove, ali su navedeni u listu Isporuke. Iznosi su u KM bez PDV-a."],
       ],
     },
   ];

@@ -24,6 +24,7 @@ export default async function MagacinPocetna() {
         />
         <Plocica href="/magacin/prijem" naslov="Prijem robe" opis="Unos robe od dobavljača" ikona="paket" />
         <Plocica href="/magacin/popis" naslov="Popis magacina" opis="Brojanje i usklađivanje stanja" ikona="stanje" />
+        <Plocica href="/magacin/nabavka" naslov="Nabavka" opis="Dobavljači: koliko dolaze, šta i po kojoj cijeni" ikona="dobavljaci" />
         <Plocica href="/magacin/otpis" naslov="Otpis robe" opis="Kvar, istek roka, lomljenje" ikona="upozorenje" />
         <Plocica
           href="/magacin/naruciti"

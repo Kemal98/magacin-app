@@ -32,9 +32,12 @@ const broj = (t: string) => Number(t.trim().replace(",", "."));
 export function PrijemForma({
   artikli,
   dobavljaci,
+  danas,
 }: {
   artikli: ArtikalZaUnos[];
   dobavljaci: { id: string; naziv: string }[];
+  /** Današnji datum "GGGG-MM-DD" (Sarajevo): zadani i najveći dozvoljeni datum isporuke. */
+  danas?: string;
 }) {
   const [stanje, akcija, radi] = useActionState(unesiPrijem, undefined);
   const [redovi, setRedovi] = useState<Red[]>([noviRed()]);
@@ -94,6 +97,21 @@ export function PrijemForma({
           ))}
         </select>
       </label>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="flex flex-col gap-1 text-lg font-semibold">
+          Datum isporuke (kad je roba stigla)
+          <input name="datum" type="date" defaultValue={danas} max={danas} className={POLJE} />
+        </label>
+        <label className="flex flex-col gap-1 text-lg font-semibold">
+          Broj otpremnice ili računa (nije obavezno)
+          <input name="dokument" autoComplete="off" className={POLJE} />
+        </label>
+        <label className="flex flex-col gap-1 text-lg font-semibold sm:col-span-2">
+          Napomena (nije obavezno)
+          <input name="napomena" autoComplete="off" placeholder="npr. došlo kamionom, oštećena ambalaža" className={POLJE} />
+        </label>
+      </div>
 
       <datalist id={lista}>
         {artikli.map((a) => (

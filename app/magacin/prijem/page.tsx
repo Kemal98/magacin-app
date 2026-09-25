@@ -3,6 +3,7 @@ import { PretragaListe } from "@/app/_components/pretraga-liste";
 import { Okvir } from "@/app/_components/okvir";
 import { datumVrijeme, km } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
+import { danasSarajevo } from "@/lib/period";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
 import { PrijemForma } from "./prijem-forma";
@@ -68,7 +69,7 @@ export default async function PrijemStranica({
         </p>
       )}
 
-      <PrijemForma artikli={artikli} dobavljaci={dobavljaciRes.data!} />
+      <PrijemForma artikli={artikli} dobavljaci={dobavljaciRes.data!} danas={danasSarajevo()} />
 
       <section className="flex flex-col gap-2">
         <h2 className="text-2xl font-semibold">Zadnji prijemi</h2>
