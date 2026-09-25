@@ -4,9 +4,9 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Lokalna baza se pokreće jednom naredbom i migracije se primjenjuju od nule
-- [ ] Test okvir poziva operaciju u bazi i provjerava rezultat, počevši od praznog stanja svaki put
-- [ ] Jedan probni test prolazi i pokazuje obrazac za sve ostale zadatke
-- [ ] Kratko uputstvo u repozitoriju kako pokrenuti bazu i testove
+- [x] Lokalna baza se pokreće jednom naredbom i migracije se primjenjuju od nule
+- [x] Test okvir poziva operaciju u bazi i provjerava rezultat, počevši od praznog stanja svaki put
+- [x] Jedan probni test prolazi i pokazuje obrazac za sve ostale zadatke
+- [x] Kratko uputstvo u repozitoriju kako pokrenuti bazu i testove
