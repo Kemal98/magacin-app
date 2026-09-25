@@ -5,6 +5,7 @@ import { zahtijevajUlogu } from "@/lib/korisnik";
 export const metadata = { title: "Menadžer" };
 
 const STAVKE = [
+  { href: "/menadzer/stanje", naslov: "Stanje magacina", opis: "Količine i vrijednost zaliha" },
   { href: "/menadzer/artikli", naslov: "Artikli", opis: "Mjere, pakovanja, bar kodovi, minimum" },
   { href: "/menadzer/objekti", naslov: "Objekti", opis: "Kuhinje, šankovi, hoteli" },
   { href: "/menadzer/dobavljaci", naslov: "Dobavljači", opis: "Firme od kojih se nabavlja" },
@@ -16,7 +17,7 @@ export default async function MenadzerPocetna() {
   return (
     <Okvir korisnik={korisnik} naslov="Pregled">
       <h2 className="text-2xl font-semibold">Šifrarnik</h2>
-      <nav className="grid gap-4 sm:grid-cols-2">
+      <nav className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {STAVKE.map((s) => (
           <Link
             key={s.href}

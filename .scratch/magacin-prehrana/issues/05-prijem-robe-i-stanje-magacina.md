@@ -4,10 +4,10 @@
 
 **Blocked by:** 03 (Šifrarnik: artikli, objekti, dobavljači)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Pakovanje se pretvara u osnovnu mjeru pri prijemu
-- [ ] Prosječna cijena je ponderisana i mijenja se s prijemom po drugoj cijeni
-- [ ] Pregled stanja pokazuje količinu i vrijednost po artiklu i ukupno
-- [ ] Prijem se bilježi u nepromjenjivu knjigu s imenom osobe i vremenom
-- [ ] Testovi pokrivaju više prijema po različitim cijenama
+- [x] Pakovanje se pretvara u osnovnu mjeru pri prijemu
+- [x] Prosječna cijena je ponderisana i mijenja se s prijemom po drugoj cijeni
+- [x] Pregled stanja pokazuje količinu i vrijednost po artiklu i ukupno
+- [x] Prijem se bilježi u nepromjenjivu knjigu s imenom osobe i vremenom
+- [x] Testovi pokrivaju više prijema po različitim cijenama
