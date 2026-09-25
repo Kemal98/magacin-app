@@ -4,10 +4,10 @@
 
 **Blocked by:** 05 (Prijem robe i stanje magacina), 07 (Popis artikala po objektu (ŠANK HOTEL))
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Zahtjev prolazi statuse poslan, odobren (puna ili manja količina), odbijen
-- [ ] Odbijanje traži razlog koji objekat vidi
-- [ ] Novi zahtjev i promjena statusa vide se bez osvježavanja stranice
-- [ ] Objekat može tražiti samo artikle sa svog popisa
-- [ ] Testovi pokrivaju sve statuse i zabranjene prelaze
+- [x] Zahtjev prolazi statuse poslan, odobren (puna ili manja količina), odbijen
+- [x] Odbijanje traži razlog koji objekat vidi
+- [x] Novi zahtjev i promjena statusa vide se bez osvježavanja stranice
+- [x] Objekat može tražiti samo artikle sa svog popisa
+- [x] Testovi pokrivaju sve statuse i zabranjene prelaze

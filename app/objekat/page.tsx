@@ -1,35 +1,48 @@
+import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
+import { Osvjezavac } from "@/app/_components/osvjezavac";
+import { ZahtjevKartica } from "@/app/_components/zahtjev-prikaz";
 import { zahtijevajUlogu } from "@/lib/korisnik";
-import { napraviServerKlijent } from "@/lib/supabase/server";
+import { ucitajZahtjeve } from "@/lib/zahtjevi";
 
 export const metadata = { title: "Objekat" };
 
-type ArtikalObjekta = { id: string; naziv: string; mjera: string };
-
-export default async function ObjekatPocetna() {
+export default async function ObjekatPocetna({
+  searchParams,
+}: {
+  searchParams: Promise<{ poslano?: string }>;
+}) {
   const korisnik = await zahtijevajUlogu("objekat");
-  const supabase = await napraviServerKlijent();
-  const { data, error } = await supabase.rpc("artikli_objekta");
-  const artikli = (data ?? []) as ArtikalObjekta[];
+  const { poslano } = await searchParams;
+  const zahtjevi = await ucitajZahtjeve(undefined, 30);
 
   return (
     <Okvir korisnik={korisnik} naslov="Objekat">
-      <h2 className="text-2xl font-semibold">Vaši artikli</h2>
-      {error ? (
-        <p role="alert" className="text-xl font-semibold text-red-700">
-          {error.message}
+      <Osvjezavac />
+      {poslano && (
+        <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
+          Zahtjev je poslan magacinu.
         </p>
-      ) : artikli.length === 0 ? (
-        <p className="text-xl text-zinc-500">Menadžer još nije zadao artikle za vaš objekat.</p>
-      ) : (
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {artikli.map((a) => (
-            <li key={a.id} className="rounded-xl border-2 border-zinc-200 p-3 text-xl">
-              {a.naziv} <span className="text-zinc-500">({a.mjera})</span>
-            </li>
-          ))}
-        </ul>
       )}
+      <Link
+        href="/objekat/zahtjev"
+        className="flex min-h-24 items-center justify-center rounded-2xl bg-zinc-900 text-3xl font-bold text-white active:bg-zinc-700"
+      >
+        Novi zahtjev za robu
+      </Link>
+
+      <section className="flex flex-col gap-3">
+        <h2 className="text-2xl font-semibold">Vaši zahtjevi</h2>
+        {zahtjevi.length === 0 ? (
+          <p className="text-xl text-zinc-500">Još niste poslali nijedan zahtjev.</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {zahtjevi.map((z) => (
+              <ZahtjevKartica key={z.id} z={z} />
+            ))}
+          </ul>
+        )}
+      </section>
     </Okvir>
   );
 }
