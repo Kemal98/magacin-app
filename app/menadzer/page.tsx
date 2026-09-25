@@ -23,6 +23,7 @@ export default async function MenadzerPocetna() {
           <Plocica href="/menadzer/smjene" naslov="Smjene i potrošnja" opis="Trošak po smjeni, upozorenja" ikona="sat" />
           <Plocica href="/menadzer/razlike" naslov="Razlike pri prijemu" opis="Poslano i stiglo se ne poklapa" ikona="upozorenje" />
           <Plocica href="/menadzer/popisi" naslov="Popisi magacina" opis="Razlike brojanog i sistemskog" ikona="zahtjevi" />
+          <Plocica href="/menadzer/storno" naslov="Storno" opis="Poništi pogrešan prijem, izdavanje, otpis" ikona="nazad" />
           <Plocica href="/menadzer/otpis" naslov="Otpis magacina" opis="Šta je i zašto otpisano" ikona="upozorenje" />
           <Plocica href="/menadzer/stanje" naslov="Stanje magacina" opis="Količine i vrijednost zaliha" ikona="stanje" />
         </nav>

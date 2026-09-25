@@ -4,9 +4,9 @@
 
 **Blocked by:** 09 (Izdavanje ("na dostavi")), 13 (Otpis magacina)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Storno vraća stanje magacina i zalihe objekta u ispravno
-- [ ] Storno traži razlog i bilježi ko ga je uradio
-- [ ] Originalni zapis ostaje vidljiv uz oznaku storna
-- [ ] Samo menadžer može poništavati
+- [x] Storno vraća stanje magacina i zalihe objekta u ispravno
+- [x] Storno traži razlog i bilježi ko ga je uradio
+- [x] Originalni zapis ostaje vidljiv uz oznaku storna
+- [x] Samo menadžer može poništavati

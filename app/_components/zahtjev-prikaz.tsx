@@ -7,6 +7,7 @@ const BOJA_STATUSA = {
   odbijen: "bg-red-100 text-red-900 border-red-700",
   na_dostavi: "bg-blue-100 text-blue-900 border-blue-700",
   primljeno: "bg-green-100 text-green-900 border-green-700",
+  stornirano: "bg-zinc-200 text-zinc-700 border-zinc-500",
 } as const;
 
 export function StatusOznaka({ status }: { status: Zahtjev["status"] }) {
@@ -67,6 +68,11 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
         })}
       </ul>
 
+      {z.status === "stornirano" && (
+        <p className="text-xl font-semibold text-zinc-700">
+          Izdavanje je poništeno; roba nije u zalihi objekta. Ako je i dalje potrebna, pošaljite novi zahtjev.
+        </p>
+      )}
       {z.status === "odbijen" && (
         <p className="text-xl font-semibold text-red-800">Razlog odbijanja: {z.razlog}</p>
       )}

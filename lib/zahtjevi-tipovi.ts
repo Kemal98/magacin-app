@@ -1,6 +1,6 @@
 // Tipovi i nazivi za zahtjeve; bez pristupa bazi, pa smiju i u klijentske komponente.
 
-export type StatusZahtjeva = "poslan" | "odobren" | "odbijen" | "na_dostavi" | "primljeno";
+export type StatusZahtjeva = "poslan" | "odobren" | "odbijen" | "na_dostavi" | "primljeno" | "stornirano";
 
 export type StavkaZahtjeva = {
   id: string;
@@ -47,4 +47,5 @@ export const NAZIV_STATUSA: Record<StatusZahtjeva, string> = {
   odbijen: "Odbijen",
   na_dostavi: "Na dostavi",
   primljeno: "Primljeno",
+  stornirano: "Stornirano, izdavanje poništeno",
 };
