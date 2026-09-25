@@ -287,14 +287,59 @@ describe("odbijanje", () => {
     });
   });
 
-  it("odobren zahtjev se ne može odbiti", async () => {
+  it("odobren zahtjev koji još nije izdat može se odbiti uz razlog (npr. nema robe)", async () => {
     await uTransakciji(async (db) => {
       const s = await pripremi(db);
       await kao(db, s.sankOsoblje);
       const id = await posalji(db, [{ artikal_id: s.cokolada, kolicina: 5 }]);
       await kao(db, s.magacioner);
       await odobri(db, id);
+      await odbij(db, id, "Robe nema na stanju");
+      await kao(db, s.sankOsoblje);
+      expect(await jedan(db, id)).toMatchObject({ status: "odbijen", razlog: "Robe nema na stanju" });
+    });
+  });
+
+  it("odobren zahtjev se ne može odbiti bez razloga", async () => {
+    await uTransakciji(async (db) => {
+      const s = await pripremi(db);
+      await kao(db, s.sankOsoblje);
+      const id = await posalji(db, [{ artikal_id: s.cokolada, kolicina: 5 }]);
+      await kao(db, s.magacioner);
+      await odobri(db, id);
+      await expect(odbij(db, id, " ")).rejects.toThrow(/razlog/i);
+    });
+  });
+
+  it("izdat zahtjev se više ne može odbiti", async () => {
+    await uTransakciji(async (db) => {
+      const s = await pripremi(db);
+      await kao(db, s.magacioner);
+      await db.query("select magacin.unesi_prijem($1, $2::jsonb)", [s.dobavljac, JSON.stringify([{ artikal_id: s.cokolada, kolicina: 10, cijena: 4 }])]);
+      await kao(db, s.sankOsoblje);
+      const id = await posalji(db, [{ artikal_id: s.cokolada, kolicina: 5 }]);
+      await kao(db, s.magacioner);
+      await odobri(db, id);
+      await db.query("select magacin.izdaj_zahtjev($1)", [id]);
       await expect(odbij(db, id, "Predomislio sam se")).rejects.toThrow(/već obrađen/i);
+    });
+  });
+
+  it("izdavanje s nulom za stavku kojoj nema robe prolazi za ostale stavke", async () => {
+    await uTransakciji(async (db) => {
+      const s = await pripremi(db);
+      await kao(db, s.magacioner);
+      await db.query("select magacin.unesi_prijem($1, $2::jsonb)", [s.dobavljac, JSON.stringify([{ artikal_id: s.cokolada, kolicina: 10, cijena: 4 }])]);
+      await kao(db, s.sankOsoblje);
+      const id = await posalji(db, [{ artikal_id: s.cokolada, kolicina: 5 }, { artikal_id: s.mlijeko, kolicina: 3 }]); // mlijeka nema
+      await kao(db, s.magacioner);
+      await odobri(db, id);
+      const mlijeko = (await jedan(db, id)).stavke.find((x: { naziv: string }) => x.naziv === "Mlijeko");
+      await db.query("select magacin.izdaj_zahtjev($1, $2::jsonb)", [id, JSON.stringify([{ stavka_id: mlijeko.id, kolicina: 0 }])]);
+      const z = await jedan(db, id);
+      expect(z.status).toBe("na_dostavi");
+      expect(Number(z.stavke.find((x: { naziv: string }) => x.naziv === "Mlijeko").izdana_kolicina)).toBe(0);
+      expect(Number(z.stavke.find((x: { naziv: string }) => x.naziv === "Topla čokolada").izdana_kolicina)).toBe(5);
     });
   });
 

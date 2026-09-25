@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { odbijZahtjev, odobriZahtjev } from "@/app/actions/zahtjevi";
 import { StatusOznaka, kolicinaTekst } from "@/app/_components/zahtjev-prikaz";
 import { datumVrijeme, kolicina as fmt } from "@/lib/format";
+import { kolikoIma } from "@/lib/zahtjevi-kolicine";
 import type { Zahtjev } from "@/lib/zahtjevi-tipovi";
 
 /** Zahtjev koji čeka odluku: magacioner odobrava (uz moguće manje količine) ili odbija uz razlog. */
@@ -37,12 +38,15 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
                     Na stanju: {fmt(s.na_stanju ?? 0)} {s.mjera}
                     {nedovoljno && " (nedovoljno)"}
                   </p>
+                  {kolikoIma(s, s.trazena_kolicina) === 0 && (
+                    <p className="text-lg font-bold text-red-800">Nema robe: po zadanom se ne odobrava (upišite 0 ili količinu koju imate).</p>
+                  )}
                 </div>
                 <label className="flex items-center gap-2 text-lg">
                   Odobri
                   <input
                     name={`kolicina_${s.id}`}
-                    defaultValue={String(s.trazena_kolicina)}
+                    defaultValue={String(kolikoIma(s, s.trazena_kolicina))}
                     inputMode="decimal"
                     aria-label={`Odobrena količina ${s.naziv}`}
                     className="min-h-14 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-2xl font-bold bg-white"

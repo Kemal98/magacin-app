@@ -153,7 +153,7 @@ describe("magacioner: obrada zahtjeva", () => {
 
   it("odobrava puno: šalje tražene količine", async () => {
     const u = userEvent.setup();
-    render(<ZahtjevObrada z={zahtjev} />);
+    render(<ZahtjevObrada z={{ ...zahtjev, stavke: zahtjev.stavke.map((x) => ({ ...x, na_stanju: 1000 })) }} />);
     await u.click(screen.getByRole("button", { name: "Odobri" }));
     expect(odobreno).toHaveBeenCalledWith(zahtjev.id, { kolicina_s1: "3", kolicina_s2: "5" });
   });
@@ -198,7 +198,7 @@ const odobren: Zahtjev = {
 describe("magacioner: izdavanje odobrenog zahtjeva", () => {
   it("izdaje odobrene količine jednim dodirom", async () => {
     const u = userEvent.setup();
-    render(<ZahtjevIzdavanje z={odobren} />);
+    render(<ZahtjevIzdavanje z={{ ...odobren, stavke: odobren.stavke.map((x) => ({ ...x, na_stanju: 1000 })) }} />);
     await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
     expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "3", izdaj_s2: "5" });
   });
@@ -243,6 +243,77 @@ describe("magacioner: izdavanje odobrenog zahtjeva", () => {
     const z = { ...odobren, stavke: [{ ...odobren.stavke[0], na_stanju: 4 }, odobren.stavke[1]] };
     render(<ZahtjevIzdavanje z={z} />);
     expect(screen.getAllByText(/\(nedovoljno\)/)).toHaveLength(1);
+  });
+});
+
+describe("odobravanje uz nedovoljno robe", () => {
+  it("količina za odobravanje je unaprijed svedena na stanje (u jedinici traženja)", () => {
+    // Kafa: traženo 3 kutije (30 kg), na stanju 12 kg → 1,2 kutije; Mlijeko: traženo 5, na stanju 0
+    const z = { ...zahtjev, stavke: [{ ...zahtjev.stavke[0], na_stanju: 12 }, { ...zahtjev.stavke[1], na_stanju: 0 }] };
+    render(<ZahtjevObrada z={z} />);
+    expect((screen.getByLabelText("Odobrena količina Kafa") as HTMLInputElement).value).toBe("1.2");
+    expect((screen.getByLabelText("Odobrena količina Mlijeko") as HTMLInputElement).value).toBe("0");
+    expect(screen.getByText(/Nema robe: po zadanom se ne odobrava/)).toBeTruthy();
+  });
+});
+
+describe("izdavanje kad nekog artikla nema na stanju", () => {
+  // Kao u praksi: dvije stavke, jedne ima dovoljno, druge nema uopće.
+  const zaglavljen: Zahtjev = {
+    ...odobren,
+    stavke: [
+      { ...odobren.stavke[0], naziv: "Fresco cola", pakovanje: null, faktor: null, trazena_kolicina: 5, trazena_osnovna: 5, odobrena_kolicina: 5, odobrena_osnovna: 5, na_stanju: 500 },
+      { ...odobren.stavke[1], naziv: "Voda Ella", mjera: "l", trazena_kolicina: 1, trazena_osnovna: 1, odobrena_kolicina: 1, odobrena_osnovna: 1, na_stanju: 0 },
+    ],
+  };
+
+  it("količina za izdavanje je već svedena na stanje, a stavka bez robe je jasno označena", () => {
+    render(<ZahtjevIzdavanje z={zaglavljen} />);
+    expect((screen.getByLabelText("Izdana količina Fresco cola") as HTMLInputElement).value).toBe("5");
+    expect((screen.getByLabelText("Izdana količina Voda Ella") as HTMLInputElement).value).toBe("0");
+    expect(screen.getByText("Ova stavka se neće izdati.")).toBeTruthy();
+    expect(screen.getByText(/količina za izdavanje prilagođena/)).toBeTruthy();
+  });
+
+  it("može se dalje: izdaje se ono što ima, a za artikal kojeg nema šalje se nula", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={zaglavljen} />);
+    await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
+    expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "5", izdaj_s2: "0" });
+  });
+
+  it("dugme „Nema na stanju“ jednim dodirom isključuje stavku iz izdavanja", async () => {
+    const u = userEvent.setup();
+    const z = { ...zaglavljen, stavke: zaglavljen.stavke.map((x) => ({ ...x, na_stanju: 500 })) };
+    render(<ZahtjevIzdavanje z={z} />);
+    await u.click(screen.getByRole("button", { name: "Nema na stanju: ne izdaj Voda Ella" }));
+    expect((screen.getByLabelText("Izdana količina Voda Ella") as HTMLInputElement).value).toBe("0");
+    expect(screen.getByText("Ova stavka se neće izdati.")).toBeTruthy();
+    await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
+    expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "5", izdaj_s2: "0" });
+  });
+
+  it("kad se ne može izdati nijedna stavka, izdavanje je isključeno i nudi se odbijanje", async () => {
+    const u = userEvent.setup();
+    const z = { ...zaglavljen, stavke: zaglavljen.stavke.map((x) => ({ ...x, na_stanju: 0 })) };
+    render(<ZahtjevIzdavanje z={z} />);
+    expect((screen.getByRole("button", { name: "Označi na dostavi" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.getByText(/odbijte zahtjev uz razlog/)).toBeTruthy();
+    await u.click(screen.getByRole("button", { name: "Ne mogu izdati: odbij zahtjev" }));
+    await u.type(screen.getByLabelText(/Razlog odbijanja/), "Nema robe na stanju");
+    await u.click(screen.getByRole("button", { name: "Potvrdi odbijanje" }));
+    expect(odbijeno).toHaveBeenCalledWith(odobren.id, "Nema robe na stanju");
+    expect(izdato).not.toHaveBeenCalled();
+  });
+
+  it("magacioner može ručno povećati ili smanjiti količinu", async () => {
+    const u = userEvent.setup();
+    render(<ZahtjevIzdavanje z={zaglavljen} />);
+    const polje = screen.getByLabelText("Izdana količina Fresco cola");
+    await u.clear(polje);
+    await u.type(polje, "2");
+    await u.click(screen.getByRole("button", { name: "Označi na dostavi" }));
+    expect(izdato).toHaveBeenCalledWith(odobren.id, { izdaj_s1: "2", izdaj_s2: "0" });
   });
 });
 
