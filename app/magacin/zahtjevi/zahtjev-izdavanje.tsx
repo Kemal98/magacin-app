@@ -42,7 +42,7 @@ export function ZahtjevIzdavanje({ z }: { z: Zahtjev }) {
   };
 
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border-2 border-green-700 p-4">
+    <li className="flex flex-col gap-4 rounded-2xl border border-green-700 p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-2xl font-bold">{z.objekat}</p>
@@ -68,12 +68,12 @@ export function ZahtjevIzdavanje({ z }: { z: Zahtjev }) {
             placeholder="Skenirajte artikal (nije obavezno)"
             aria-label="Skenirajte artikal"
             autoComplete="off"
-            className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl"
+            className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl bg-white"
           />
           <button
             type="button"
             onClick={() => setKamera(true)}
-            className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold active:bg-zinc-200"
+            className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold active:bg-zinc-200 bg-white"
           >
             Kamera
           </button>
@@ -94,7 +94,7 @@ export function ZahtjevIzdavanje({ z }: { z: Zahtjev }) {
             return (
               <li
                 key={s.id}
-                className={`flex flex-wrap items-center gap-3 rounded-xl border-2 p-3 text-xl ${gotovo ? "border-green-700 bg-green-50" : "border-zinc-200"}`}
+                className={`flex flex-wrap items-center gap-3 rounded-xl border-2 p-3 text-xl ${gotovo ? "border-green-700 bg-green-50" : "border-zinc-200 bg-white"}`}
               >
                 <div className="min-w-56 flex-1">
                   <p className="font-semibold">
@@ -116,7 +116,7 @@ export function ZahtjevIzdavanje({ z }: { z: Zahtjev }) {
                     defaultValue={String(odobrena)}
                     inputMode="decimal"
                     aria-label={`Izdana količina ${s.naziv}`}
-                    className="min-h-14 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-2xl font-bold"
+                    className="min-h-14 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-2xl font-bold bg-white"
                   />
                   <span>{s.pakovanje ?? s.mjera}</span>
                 </label>

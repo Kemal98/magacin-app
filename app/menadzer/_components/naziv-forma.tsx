@@ -25,12 +25,12 @@ export function NazivForma({
           defaultValue={naziv}
           key={naziv}
           aria-label="Naziv"
-          className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl"
+          className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl bg-white"
         />
         <button
           type="submit"
           disabled={radi}
-          className="min-h-14 rounded-xl bg-zinc-900 px-6 text-lg font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+          className="min-h-14 rounded-xl bg-brand px-6 text-lg font-semibold text-white active:bg-brand-dark disabled:opacity-50"
         >
           {dugme}
         </button>

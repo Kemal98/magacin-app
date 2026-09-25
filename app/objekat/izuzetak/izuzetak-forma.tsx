@@ -32,7 +32,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
           onChange={(e) => setTrazi(e.target.value)}
           placeholder="Traži artikal"
           aria-label="Traži artikal"
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl bg-white"
         />
         <ul className="grid max-h-80 grid-cols-2 gap-3 overflow-auto sm:grid-cols-3">
           {vidljivi.map((a) => (
@@ -42,7 +42,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
                 onClick={() => setArtikal(a.id)}
                 aria-pressed={artikal === a.id}
                 className={`flex min-h-20 w-full flex-col items-start justify-center rounded-2xl border-2 p-3 text-left text-xl font-semibold active:bg-zinc-200 ${
-                  artikal === a.id ? "border-zinc-900 bg-zinc-100" : "border-zinc-300"
+                  artikal === a.id ? "border-brand bg-brand-soft" : "border-zinc-200 bg-white shadow-sm"
                 }`}
               >
                 <span>{a.naziv}</span>
@@ -61,7 +61,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
           name="kolicina"
           inputMode="decimal"
           aria-label="Količina"
-          className="min-h-16 w-32 rounded-xl border-2 border-zinc-300 px-3 text-center text-3xl font-bold"
+          className="min-h-16 w-32 rounded-xl border-2 border-zinc-300 px-3 text-center text-3xl font-bold bg-white"
         />
         <span>{izabran?.mjera}</span>
       </label>
@@ -76,7 +76,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
               key={r}
               type="button"
               onClick={() => setRazlog(r)}
-              className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-xl font-semibold active:bg-zinc-200"
+              className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-xl font-semibold active:bg-zinc-200 bg-white"
             >
               {r}
             </button>
@@ -87,7 +87,7 @@ export function IzuzetakForma({ artikli }: { artikli: Artikal[] }) {
           name="razlog"
           value={razlog}
           onChange={(e) => setRazlog(e.target.value)}
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl bg-white"
         />
       </section>
 

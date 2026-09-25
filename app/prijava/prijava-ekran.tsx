@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from "react";
 import { prijaviMenadzera, prijaviPinom } from "@/app/actions/auth";
+import { Ikona } from "@/app/_components/ikone";
 
 export type ImeZaPrijavu = {
   id: string;
@@ -25,7 +26,13 @@ export function PrijavaEkran({ imena }: { imena: ImeZaPrijavu[] }) {
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-6 px-4 py-8">
-      <h1 className="text-center text-4xl font-bold">Prijava</h1>
+      <div className="flex flex-col items-center gap-3 pt-4">
+        <span className="flex size-20 items-center justify-center rounded-3xl bg-brand text-white shadow-sm">
+          <Ikona ime="paket" className="size-11" />
+        </span>
+        <h1 className="text-center text-4xl font-bold tracking-tight">Magacin</h1>
+        <p className="text-center text-xl text-zinc-500">Prijava</p>
+      </div>
 
       {korak === "imena" && (
         <ImenaKorak
@@ -75,7 +82,7 @@ function ImenaKorak({
                 key={ime.id}
                 type="button"
                 onClick={() => naIzbor(ime)}
-                className="min-h-20 rounded-2xl bg-blue-600 px-6 text-2xl font-semibold text-white active:bg-blue-800"
+                className="min-h-20 rounded-2xl bg-brand px-6 text-2xl font-semibold text-white shadow-sm active:bg-brand-dark"
               >
                 {ime.ime}
               </button>
@@ -93,7 +100,7 @@ function ImenaKorak({
       <button
         type="button"
         onClick={naMenadzera}
-        className="mt-4 min-h-16 rounded-2xl border-2 border-zinc-300 px-6 text-xl font-semibold text-zinc-700 active:bg-zinc-200"
+        className="mt-4 min-h-16 rounded-2xl border-2 border-zinc-300 px-6 text-xl font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
       >
         Prijava menadžera
       </button>
@@ -141,7 +148,7 @@ function PinKorak({
           <span
             key={i}
             className={`size-6 rounded-full border-2 ${
-              i < pin.length ? "border-blue-600 bg-blue-600" : "border-zinc-400"
+              i < pin.length ? "border-brand bg-brand" : "border-zinc-400"
             }`}
           />
         ))}
@@ -194,7 +201,7 @@ function Tipka({
       className={`min-h-20 rounded-2xl text-3xl font-semibold disabled:opacity-50 ${
         sporedna
           ? "bg-zinc-200 text-xl text-zinc-700 active:bg-zinc-300"
-          : "bg-zinc-100 text-zinc-900 active:bg-zinc-300"
+          : "border border-zinc-200 bg-white text-zinc-900 shadow-sm active:bg-brand-soft"
       }`}
     >
       {children}
@@ -216,7 +223,7 @@ function MenadzerKorak({ nazad }: { nazad: () => void }) {
           type="email"
           autoComplete="username"
           required
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-xl font-normal"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-xl font-normal bg-white"
         />
       </label>
 
@@ -227,7 +234,7 @@ function MenadzerKorak({ nazad }: { nazad: () => void }) {
           type="password"
           autoComplete="current-password"
           required
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-xl font-normal"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-xl font-normal bg-white"
         />
       </label>
 
@@ -238,14 +245,14 @@ function MenadzerKorak({ nazad }: { nazad: () => void }) {
       <button
         type="submit"
         disabled={radi}
-        className="min-h-20 rounded-2xl bg-blue-600 px-6 text-2xl font-semibold text-white active:bg-blue-800 disabled:opacity-50"
+        className="min-h-20 rounded-2xl bg-brand px-6 text-2xl font-semibold text-white active:bg-brand-dark disabled:opacity-50"
       >
         Prijavi se
       </button>
       <button
         type="button"
         onClick={nazad}
-        className="min-h-16 rounded-2xl border-2 border-zinc-300 px-6 text-xl font-semibold text-zinc-700 active:bg-zinc-200"
+        className="min-h-16 rounded-2xl border-2 border-zinc-300 px-6 text-xl font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
       >
         Nazad
       </button>

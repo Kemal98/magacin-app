@@ -6,7 +6,7 @@ export function SmjenaKartica({ s, pokaziObjekat = false }: { s: ZatvorenaSmjena
   const trosak = s.trosak === null ? null : Number(s.trosak);
   const trosakIzuzetaka = s.trosak_izuzetaka === null ? null : Number(s.trosak_izuzetaka);
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border-2 border-zinc-300 p-4">
+    <li className="flex flex-col gap-3 rounded-2xl border border-zinc-300 p-4 shadow-sm bg-white">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           {pokaziObjekat && <p className="text-2xl font-bold">{s.objekat}</p>}

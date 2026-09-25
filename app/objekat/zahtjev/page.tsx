@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { ZahtjevForma } from "./zahtjev-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Novi zahtjev" };
 
@@ -30,9 +30,7 @@ export default async function NoviZahtjevStranica() {
 
   return (
     <Okvir korisnik={korisnik} naslov="Novi zahtjev">
-      <Link href="/objekat" className="text-2xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/objekat" />
       {artikli.length === 0 ? (
         <p className="text-xl text-zinc-500">Menadžer još nije zadao artikle za vaš objekat.</p>
       ) : (

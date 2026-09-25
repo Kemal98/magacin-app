@@ -10,7 +10,7 @@ export function UvozEkran() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form action={akcija} className="flex flex-col gap-4 rounded-2xl border-2 border-zinc-200 p-4">
+      <form action={akcija} className="flex flex-col gap-4 rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
         <p className="text-xl">
           Izaberite Excel fajl sa artiklima, objektima i dobavljačima (<em>Utrošci - zalihe.xlsx</em>). Ulazi i
           utrošci se ne uvoze, a zalihe počinju prazne. Prvo ćete vidjeti pregled; ništa se ne upisuje dok ne
@@ -20,12 +20,12 @@ export function UvozEkran() {
           type="file"
           name="fajl"
           accept=".xlsx"
-          className="min-h-14 rounded-xl border-2 border-zinc-300 p-3 text-lg"
+          className="min-h-14 rounded-xl border-2 border-zinc-300 p-3 text-lg bg-white"
         />
         <button
           type="submit"
           disabled={radi}
-          className="min-h-16 rounded-2xl bg-zinc-900 text-2xl font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+          className="min-h-16 rounded-2xl bg-brand text-2xl font-semibold text-white active:bg-brand-dark disabled:opacity-50"
         >
           {radi ? "Čitam fajl…" : "Prikaži pregled"}
         </button>
@@ -47,7 +47,7 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
   if (stanje?.uvezeno) {
     const u = stanje.uvezeno;
     return (
-      <div className="flex flex-col gap-3 rounded-2xl border-2 border-green-700 bg-green-50 p-4">
+      <div className="flex flex-col gap-3 rounded-2xl border border-green-700 bg-green-50 p-4 shadow-sm">
         <p className="text-2xl font-bold">Uvoz je završen</p>
         <p className="text-xl">
           Novo: {u.artikli} artikala, {u.objekti} objekata, {u.dobavljaci} dobavljača. Ono što je već postojalo
@@ -64,7 +64,7 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
     <form action={akcija} className="flex flex-col gap-5">
       <input type="hidden" name="podaci" value={JSON.stringify(pregled)} />
 
-      <section className="rounded-2xl border-2 border-zinc-200 p-4 text-xl">
+      <section className="rounded-2xl border border-zinc-200 p-4 text-xl shadow-sm bg-white">
         <p className="font-semibold">
           Pročitano: {pregled.artikli.length} artikala, {pregled.objekti.length} objekata,{" "}
           {pregled.dobavljaci.length} dobavljača.
@@ -85,7 +85,7 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
         </p>
         <ul className="flex flex-col gap-2">
           {pregled.artikli.map((a, i) => (
-            <li key={a.naziv} className="flex items-center justify-between gap-3 rounded-xl border-2 border-zinc-200 p-3">
+            <li key={a.naziv} className="flex items-center justify-between gap-3 rounded-xl border-2 border-zinc-200 p-3 bg-white">
               <span className="text-lg">
                 {a.naziv} <span className="text-zinc-500">({a.mjera})</span>
               </span>
@@ -93,7 +93,7 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
                 name={`vrsta_${i}`}
                 defaultValue={a.vrsta}
                 aria-label={`Magacin za ${a.naziv}`}
-                className="min-h-12 rounded-xl border-2 border-zinc-300 px-3 text-lg"
+                className="min-h-12 rounded-xl border-2 border-zinc-300 px-3 text-lg bg-white"
               >
                 <option value="prehrana">Prehrana</option>
                 <option value="materijal">Materijal</option>
@@ -104,11 +104,11 @@ function Pregled({ pregled }: { pregled: PripremljenUvoz }) {
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border-2 border-zinc-200 p-4">
+        <div className="rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
           <h2 className="text-2xl font-semibold">Objekti</h2>
           <ul className="mt-2 text-lg">{pregled.objekti.map((o) => <li key={o}>{o}</li>)}</ul>
         </div>
-        <div className="rounded-2xl border-2 border-zinc-200 p-4">
+        <div className="rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
           <h2 className="text-2xl font-semibold">Dobavljači</h2>
           <ul className="mt-2 text-lg">{pregled.dobavljaci.map((d) => <li key={d}>{d}</li>)}</ul>
         </div>

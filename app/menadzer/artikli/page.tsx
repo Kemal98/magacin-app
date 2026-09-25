@@ -3,6 +3,7 @@ import { Okvir } from "@/app/_components/okvir";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { AktivnostDugme } from "../_components/aktivnost-dugme";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Artikli" };
 
@@ -20,12 +21,10 @@ export default async function ArtikliStranica() {
   return (
     <Okvir korisnik={korisnik} naslov="Artikli">
       <div className="flex items-center justify-between gap-4">
-        <Link href="/menadzer" className="text-xl font-semibold text-zinc-600 underline">
-          ← Nazad
-        </Link>
+        <Nazad href="/menadzer" />
         <Link
           href="/menadzer/artikli/novi"
-          className="flex min-h-16 items-center rounded-2xl bg-zinc-900 px-6 text-xl font-semibold text-white active:bg-zinc-700"
+          className="flex min-h-16 items-center rounded-2xl bg-brand px-6 text-xl font-semibold text-white active:bg-brand-dark"
         >
           Novi artikal
         </Link>
@@ -36,7 +35,7 @@ export default async function ArtikliStranica() {
         {data.map((a) => (
           <li
             key={a.id}
-            className={`flex flex-wrap items-center gap-3 rounded-2xl border-2 p-4 ${a.aktivan ? "border-zinc-300" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
+            className={`flex flex-wrap items-center gap-3 rounded-2xl border p-4 shadow-sm ${a.aktivan ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
           >
             <Link href={`/menadzer/artikli/${a.id}`} className="flex flex-1 flex-col gap-1">
               <span className="text-2xl font-semibold">{a.naziv}</span>

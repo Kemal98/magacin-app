@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Okvir } from "@/app/_components/okvir";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajRaspored } from "@/lib/smjene";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { RasporedForma } from "./raspored-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Smjene objekta" };
 
@@ -22,9 +22,7 @@ export default async function RasporedStranica({ params }: { params: Promise<{ i
 
   return (
     <Okvir korisnik={korisnik} naslov={`Smjene: ${objekat.naziv}`}>
-      <Link href="/menadzer/objekti" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad na objekte
-      </Link>
+      <Nazad href="/menadzer/objekti">Nazad na objekte</Nazad>
       <RasporedForma
         objekatId={id}
         pocetni={raspored.map((r) => ({ naziv: r.naziv, pocetak: r.pocetak.slice(0, 5), kraj: r.kraj.slice(0, 5) }))}

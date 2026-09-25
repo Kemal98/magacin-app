@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Okvir } from "@/app/_components/okvir";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { PopisArtikala } from "./popis-artikala";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Artikli objekta" };
 
@@ -27,9 +27,7 @@ export default async function PopisObjektaStranica({ params }: { params: Promise
 
   return (
     <Okvir korisnik={korisnik} naslov={`Artikli: ${objekat.data.naziv}`}>
-      <Link href="/menadzer/objekti" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad na objekte
-      </Link>
+      <Nazad href="/menadzer/objekti">Nazad na objekte</Nazad>
       <PopisArtikala
         objekatId={id}
         artikli={artikli.data!}

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { datumVrijeme, kolicina as fmt } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajIzuzetke, ucitajStanjeZaZatvaranje } from "@/lib/smjene";
 import { IzuzetakForma } from "./izuzetak-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Izuzetak" };
 
@@ -19,11 +19,9 @@ export default async function IzuzetakStranica({
 
   return (
     <Okvir korisnik={korisnik} naslov="Izuzetak (razbijeno, proliveno…)">
-      <Link href="/objekat" className="text-2xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/objekat" />
       {dodano && (
-        <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
+        <p role="status" className="rounded-2xl border border-green-700 bg-green-50 p-4 text-xl font-semibold shadow-sm">
           Izuzetak je zabilježen.
         </p>
       )}
@@ -36,7 +34,7 @@ export default async function IzuzetakStranica({
         ) : (
           <ul className="flex flex-col gap-2">
             {izuzeci.map((i, n) => (
-              <li key={n} className="rounded-xl border-2 border-zinc-200 p-3 text-xl">
+              <li key={n} className="rounded-xl border-2 border-zinc-200 p-3 text-xl bg-white">
                 <span className="font-semibold">{i.artikal}</span>: {fmt(Number(i.kolicina))} {i.mjera}, {i.razlog}
                 <span className="block text-lg text-zinc-500">{datumVrijeme(i.vrijeme)}</span>
               </li>

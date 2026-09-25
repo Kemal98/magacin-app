@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { SmjenaKartica } from "@/app/_components/smjena-prikaz";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajSmjene } from "@/lib/smjene";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Prethodne smjene" };
 
@@ -16,11 +16,9 @@ export default async function PrethodneSmjeneStranica({
   const smjene = await ucitajSmjene(undefined, 20);
   return (
     <Okvir korisnik={korisnik} naslov="Prethodne smjene">
-      <Link href="/objekat" className="text-2xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/objekat" />
       {zatvorena && (
-        <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
+        <p role="status" className="rounded-2xl border border-green-700 bg-green-50 p-4 text-xl font-semibold shadow-sm">
           Smjena je zatvorena.
         </p>
       )}

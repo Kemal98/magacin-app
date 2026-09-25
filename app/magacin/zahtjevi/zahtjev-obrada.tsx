@@ -13,7 +13,7 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
   const [odbijanje, setOdbijanje] = useState(false);
 
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border-2 border-amber-500 p-4">
+    <li className="flex flex-col gap-4 rounded-2xl border border-amber-500 p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-2xl font-bold">{z.objekat}</p>
@@ -45,7 +45,7 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
                     defaultValue={String(s.trazena_kolicina)}
                     inputMode="decimal"
                     aria-label={`Odobrena količina ${s.naziv}`}
-                    className="min-h-14 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-2xl font-bold"
+                    className="min-h-14 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-2xl font-bold bg-white"
                   />
                   <span>{s.pakovanje ?? s.mjera}</span>
                 </label>
@@ -79,10 +79,10 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
       </form>
 
       {odbijanje && (
-        <form action={akcijaOdbij} className="flex flex-col gap-3 rounded-2xl border-2 border-red-700 p-4">
+        <form action={akcijaOdbij} className="flex flex-col gap-3 rounded-2xl border border-red-700 p-4 shadow-sm">
           <label className="flex flex-col gap-1 text-xl font-semibold">
             Razlog odbijanja (objekat će ga vidjeti)
-            <input name="razlog" autoFocus className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-xl font-normal" />
+            <input name="razlog" autoFocus className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-xl font-normal bg-white" />
           </label>
           {odbij?.greska && (
             <p role="alert" className="text-xl font-semibold text-red-700">
@@ -100,7 +100,7 @@ export function ZahtjevObrada({ z }: { z: Zahtjev }) {
             <button
               type="button"
               onClick={() => setOdbijanje(false)}
-              className="min-h-16 rounded-2xl border-2 border-zinc-300 px-8 text-2xl font-semibold active:bg-zinc-200"
+              className="min-h-16 rounded-2xl border-2 border-zinc-300 px-8 text-2xl font-semibold active:bg-zinc-200 bg-white"
             >
               Odustani
             </button>

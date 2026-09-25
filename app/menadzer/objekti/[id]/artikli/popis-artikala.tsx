@@ -45,18 +45,18 @@ export function PopisArtikala({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="flex flex-col gap-3 rounded-2xl border-2 border-zinc-200 p-4">
+      <section className="flex flex-col gap-3 rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
         <h2 className="text-2xl font-semibold">Prijedlog iz starog Excela</h2>
         <p className="text-lg text-zinc-600">
           Izaberite <em>Utrošci - zalihe.xlsx</em>. Aplikacija nalazi artikle koje je ovaj objekat stvarno
           trošio. Prijedlog možete primijeniti, pa ispraviti ispod.
         </p>
         <form action={predlozi} className="flex flex-wrap items-center gap-3">
-          <input type="file" name="fajl" accept=".xlsx" className="min-h-14 rounded-xl border-2 border-zinc-300 p-3 text-lg" />
+          <input type="file" name="fajl" accept=".xlsx" className="min-h-14 rounded-xl border-2 border-zinc-300 p-3 text-lg bg-white" />
           <button
             type="submit"
             disabled={ucitava}
-            className="min-h-14 rounded-xl bg-zinc-900 px-6 text-lg font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+            className="min-h-14 rounded-xl bg-brand px-6 text-lg font-semibold text-white active:bg-brand-dark disabled:opacity-50"
           >
             {ucitava ? "Čitam fajl…" : "Nađi prijedlog"}
           </button>
@@ -89,7 +89,7 @@ export function PopisArtikala({
                 <button
                   type="button"
                   onClick={() => primijeniPrijedlog(false)}
-                  className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold active:bg-zinc-200"
+                  className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold active:bg-zinc-200 bg-white"
                 >
                   Dodaj prijedlog na popis
                 </button>
@@ -110,7 +110,7 @@ export function PopisArtikala({
             onChange={(e) => setTrazi(e.target.value)}
             placeholder="Traži artikal"
             aria-label="Traži artikal"
-            className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl"
+            className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl bg-white"
           />
           <label className="flex min-h-14 items-center gap-3 text-lg">
             <input type="checkbox" checked={samoOznaceni} onChange={(e) => setSamoOznaceni(e.target.checked)} className="size-6" />
@@ -121,7 +121,7 @@ export function PopisArtikala({
         <ul className="flex flex-col gap-2">
           {vidljivi.map((a) => (
             <li key={a.id}>
-              <label className="flex min-h-14 items-center gap-4 rounded-xl border-2 border-zinc-200 px-4 py-2 text-lg active:bg-zinc-100">
+              <label className="flex min-h-14 items-center gap-4 rounded-xl border-2 border-zinc-200 px-4 py-2 text-lg active:bg-zinc-100 bg-white">
                 <input type="checkbox" checked={oznaceni.has(a.id)} onChange={() => preklopi(a.id)} className="size-7" />
                 <span className="flex-1">
                   {a.naziv} <span className="text-zinc-500">({a.mjera}, {VRSTA[a.vrsta] ?? a.vrsta})</span>
@@ -141,7 +141,7 @@ export function PopisArtikala({
         <button
           type="submit"
           disabled={snima}
-          className="min-h-16 rounded-2xl bg-zinc-900 text-2xl font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+          className="min-h-16 rounded-2xl bg-brand text-2xl font-semibold text-white active:bg-brand-dark disabled:opacity-50"
         >
           {snima ? "Snimam…" : "Snimi popis"}
         </button>

@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { SmjenaKartica } from "@/app/_components/smjena-prikaz";
 import { datumVrijeme, km, kolicina as fmt } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajSmjene, ucitajUpozorenja } from "@/lib/smjene";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Smjene i potrošnja" };
 
@@ -14,9 +14,7 @@ export default async function SmjeneStranica() {
   return (
     <Okvir korisnik={korisnik} naslov="Smjene i potrošnja">
       <Osvjezavac sekundi={15} />
-      <Link href="/menadzer" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/menadzer" />
 
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Upozorenja: više nego moguće ({upozorenja.length})</h2>
@@ -25,7 +23,7 @@ export default async function SmjeneStranica() {
         ) : (
           <ul className="flex flex-col gap-3">
             {upozorenja.map((u, i) => (
-              <li key={`${u.smjena_id}-${u.artikal}-${i}`} className="rounded-2xl border-2 border-amber-500 bg-amber-50 p-4 text-xl">
+              <li key={`${u.smjena_id}-${u.artikal}-${i}`} className="rounded-2xl border border-amber-500 bg-amber-50 p-4 text-xl shadow-sm">
                 <p className="font-bold">
                   {u.objekat}: {u.artikal} (+{fmt(Number(u.visak))} {u.mjera}, {km(Number(u.vrijednost))})
                 </p>

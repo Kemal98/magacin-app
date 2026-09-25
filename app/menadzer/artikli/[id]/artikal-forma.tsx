@@ -70,7 +70,7 @@ export function ArtikalForma({ artikal }: { artikal?: ArtikalPodaci }) {
         </label>
       </div>
 
-      <fieldset className="flex flex-col gap-3 rounded-2xl border-2 border-zinc-200 p-4">
+      <fieldset className="flex flex-col gap-3 rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
         <legend className="px-2 text-xl font-semibold">Pakovanja</legend>
         {pakovanja.length === 0 && (
           <p className="text-lg text-zinc-500">Bez pakovanja: artikal se vodi samo u {mjera}.</p>
@@ -112,7 +112,7 @@ export function ArtikalForma({ artikal }: { artikal?: ArtikalPodaci }) {
             <button
               type="button"
               onClick={() => setPakovanja((stara) => stara.filter((_, j) => j !== i))}
-              className="min-h-12 self-start rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+              className="min-h-12 self-start rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
             >
               Ukloni pakovanje
             </button>
@@ -123,7 +123,7 @@ export function ArtikalForma({ artikal }: { artikal?: ArtikalPodaci }) {
           onClick={() =>
             setPakovanja((stara) => [...stara, { id: null, naziv: "", faktor: "", bar_kod: "" }])
           }
-          className="min-h-14 self-start rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+          className="min-h-14 self-start rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
         >
           + Dodaj pakovanje
         </button>
@@ -138,7 +138,7 @@ export function ArtikalForma({ artikal }: { artikal?: ArtikalPodaci }) {
       <button
         type="submit"
         disabled={radi}
-        className="min-h-16 rounded-2xl bg-zinc-900 text-2xl font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+        className="min-h-16 rounded-2xl bg-brand text-2xl font-semibold text-white active:bg-brand-dark disabled:opacity-50"
       >
         Snimi artikal
       </button>

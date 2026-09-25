@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { RazlikePrikaz } from "@/app/_components/razlike-prikaz";
@@ -8,6 +7,7 @@ import { zahtijevajUlogu } from "@/lib/korisnik";
 import { ucitajZahtjeve } from "@/lib/zahtjevi";
 import { ZahtjevIzdavanje } from "./zahtjev-izdavanje";
 import { ZahtjevObrada } from "./zahtjev-obrada";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Zahtjevi" };
 
@@ -27,9 +27,7 @@ export default async function ZahtjeviStranica() {
   return (
     <Okvir korisnik={korisnik} naslov="Zahtjevi objekata">
       <Osvjezavac />
-      <Link href="/magacin" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/magacin" />
 
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Čekaju odluku ({naCekanju.length})</h2>

@@ -1,20 +1,106 @@
 @import "tailwindcss";
 
+/*
+ * Dizajn: mirna, čitka podloga za rad na tabletu.
+ *  - jedna naglašena boja (brand) za glavne radnje, sve ostalo je neutralno
+ *  - statusi (zeleno, jantarno, crveno, plavo) zadržavaju uobičajena značenja
+ *  - velike ciljne površine, jasan fokus (i za skener/tastaturu)
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --page: #f2f5f7;
+  --ink: #14212b;
+}
+
+@theme {
+  /* Naglašena boja aplikacije */
+  --color-brand: #0b5d6b;
+  --color-brand-dark: #08454f;
+  --color-brand-soft: #e2f1f3;
+
+  /* Neutralna skala (blago hladna), da tekst i okviri budu ujednačeni na svim ekranima */
+  --color-zinc-50: #f7f9fb;
+  --color-zinc-100: #edf1f4;
+  --color-zinc-200: #dde4ea;
+  --color-zinc-300: #c7d1da;
+  --color-zinc-400: #93a3b1;
+  --color-zinc-500: #62758a;
+  --color-zinc-600: #4a5c6d;
+  --color-zinc-700: #34455a;
+  --color-zinc-800: #22303f;
+  --color-zinc-900: #14212b;
+
+  --color-page: var(--page);
+  --color-ink: var(--ink);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
 }
 
+html {
+  color-scheme: light;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--page);
+  color: var(--ink);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
   /* Tableti: bez slučajnog povećanja dvostrukim dodirom, brži odziv dodira */
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Jasan fokus: vidi se i kad radi skener kao tastatura ili spoljna tastatura */
+:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+button:not(:disabled),
+summary,
+select,
+[type="checkbox"],
+[type="file"] {
+  cursor: pointer;
+}
+
+button {
+  transition: background-color 120ms, border-color 120ms, transform 80ms;
+}
+button:not(:disabled):active {
+  transform: scale(0.985);
+}
+
+input,
+select,
+textarea {
+  background: #fff;
+  border-radius: 0.75rem;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-brand-soft);
+  outline: none;
+}
+input[type="checkbox"] {
+  accent-color: var(--color-brand);
+}
+
+/* Tabele: zaglavlje je tiše, a redovi se lakše prate */
+thead th {
+  color: var(--color-zinc-500);
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+tbody tr:nth-child(even) {
+  background: var(--color-zinc-50);
+}
+
+::placeholder {
+  color: var(--color-zinc-400);
 }

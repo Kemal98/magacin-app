@@ -5,6 +5,7 @@ import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import type { ArtikalZaUnos } from "@/lib/bar-kod";
 import { PrijemForma } from "./prijem-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Prijem robe" };
 
@@ -55,12 +56,10 @@ export default async function PrijemStranica({
 
   return (
     <Okvir korisnik={korisnik} naslov="Prijem robe">
-      <Link href="/magacin" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/magacin" />
 
       {uneseno && (
-        <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
+        <p role="status" className="rounded-2xl border border-green-700 bg-green-50 p-4 text-xl font-semibold shadow-sm">
           Prijem je snimljen.{" "}
           <Link href="/magacin/stanje" className="underline">
             Pogledaj stanje magacina
@@ -75,7 +74,7 @@ export default async function PrijemStranica({
         {(zadnjiRes.data as ZadnjiPrijem[]).length === 0 && <p className="text-xl text-zinc-500">Još nema prijema.</p>}
         <ul className="flex flex-col gap-2">
           {(zadnjiRes.data as ZadnjiPrijem[]).map((p) => (
-            <li key={p.id} className="rounded-xl border-2 border-zinc-200 p-3 text-lg">
+            <li key={p.id} className="rounded-xl border-2 border-zinc-200 p-3 text-lg bg-white">
               <span className="font-semibold">{p.dobavljac}</span> · {p.broj_stavki} stavki · {km(Number(p.vrijednost))}
               <br />
               <span className="text-zinc-500">

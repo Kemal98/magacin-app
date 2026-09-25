@@ -35,7 +35,7 @@ export function StanjeTabela({ redovi }: { redovi: RedStanja[] }) {
           onChange={(e) => setTrazi(e.target.value)}
           placeholder="Traži artikal"
           aria-label="Traži artikal"
-          className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl"
+          className="min-h-14 flex-1 rounded-xl border-2 border-zinc-300 px-4 text-xl bg-white"
         />
         <label className="flex min-h-14 items-center gap-3 text-lg">
           <input

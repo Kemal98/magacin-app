@@ -25,7 +25,7 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
     const n = broj(upisano);
     const visak = Number.isFinite(n) && n > r.moguce + 1e-9;
     return (
-      <li key={r.artikal_id} className="flex flex-col gap-2 rounded-2xl border-2 border-zinc-200 p-3">
+      <li key={r.artikal_id} className="flex flex-col gap-2 rounded-2xl border border-zinc-200 p-3 shadow-sm bg-white">
         <div className="flex flex-wrap items-center gap-3">
           <div className="min-w-56 flex-1">
             <p className="text-2xl font-semibold">{r.naziv}</p>
@@ -79,7 +79,7 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
       </section>
 
       {ostali.length > 0 && (
-        <details className="rounded-2xl border-2 border-zinc-200 p-3">
+        <details className="rounded-2xl border border-zinc-200 p-3 shadow-sm bg-white">
           <summary className="min-h-14 cursor-pointer text-xl font-semibold">
             Ostali artikli s popisa ({ostali.length}): upišite samo ako ste nešto našli
           </summary>
@@ -93,7 +93,7 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
           name="ime"
           required
           autoComplete="off"
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl font-normal"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl font-normal bg-white"
         />
       </label>
 
@@ -108,7 +108,7 @@ export function ZatvaranjeForma({ redovi }: { redovi: RedZaZatvaranje[] }) {
       <button
         type="submit"
         disabled={radi}
-        className="min-h-20 rounded-2xl bg-zinc-900 text-3xl font-bold text-white active:bg-zinc-700 disabled:opacity-50"
+        className="min-h-20 rounded-2xl bg-brand text-3xl font-bold text-white active:bg-brand-dark disabled:opacity-50"
       >
         {radi ? "Zatvaram…" : "Zatvori smjenu"}
       </button>

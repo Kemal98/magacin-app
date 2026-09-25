@@ -14,7 +14,7 @@ export function AktivnostDugme({
     <form action={promijeniAktivnost.bind(null, vrsta, id, !aktivan)}>
       <button
         type="submit"
-        className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+        className="min-h-14 rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
       >
         {aktivan ? "Isključi" : "Uključi"}
       </button>

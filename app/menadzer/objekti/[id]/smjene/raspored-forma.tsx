@@ -21,7 +21,7 @@ export function RasporedForma({ objekatId, pocetni }: { objekatId: string; pocet
       </p>
       {redovi.length === 0 && <p className="text-xl text-zinc-500">Nema zadanih smjena.</p>}
       {redovi.map((r, i) => (
-        <div key={i} className="flex flex-wrap items-end gap-3 rounded-2xl border-2 border-zinc-200 p-3">
+        <div key={i} className="flex flex-wrap items-end gap-3 rounded-2xl border border-zinc-200 p-3 shadow-sm bg-white">
           <label className="flex min-w-48 flex-1 flex-col gap-1 text-lg">
             Naziv
             <input name="naziv" value={r.naziv} onChange={(e) => izmijeni(i, "naziv", e.target.value)} className={POLJE} />
@@ -37,7 +37,7 @@ export function RasporedForma({ objekatId, pocetni }: { objekatId: string; pocet
           <button
             type="button"
             onClick={() => setRedovi((stari) => stari.filter((_, j) => j !== i))}
-            className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+            className="min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
           >
             Ukloni
           </button>
@@ -46,7 +46,7 @@ export function RasporedForma({ objekatId, pocetni }: { objekatId: string; pocet
       <button
         type="button"
         onClick={() => setRedovi((stari) => [...stari, { naziv: "", pocetak: "", kraj: "" }])}
-        className="min-h-14 self-start rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold active:bg-zinc-200"
+        className="min-h-14 self-start rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold active:bg-zinc-200 bg-white"
       >
         + Dodaj smjenu
       </button>
@@ -58,7 +58,7 @@ export function RasporedForma({ objekatId, pocetni }: { objekatId: string; pocet
       <button
         type="submit"
         disabled={radi}
-        className="min-h-16 rounded-2xl bg-zinc-900 text-2xl font-semibold text-white active:bg-zinc-700 disabled:opacity-50"
+        className="min-h-16 rounded-2xl bg-brand text-2xl font-semibold text-white active:bg-brand-dark disabled:opacity-50"
       >
         {radi ? "Snimam…" : "Snimi smjene"}
       </button>

@@ -47,7 +47,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
           onChange={(e) => setTrazi(e.target.value)}
           placeholder="Traži artikal"
           aria-label="Traži artikal"
-          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl"
+          className="min-h-16 rounded-2xl border-2 border-zinc-300 px-4 text-2xl bg-white"
         />
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {vidljivi.map((a) => {
@@ -59,7 +59,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
                   onClick={() => dodaj(a.id)}
                   aria-pressed={uKorpi}
                   className={`flex min-h-24 w-full flex-col items-start justify-center gap-1 rounded-2xl border-2 p-3 text-left text-xl font-semibold active:bg-zinc-200 ${
-                    uKorpi ? "border-green-700 bg-green-50" : "border-zinc-300"
+                    uKorpi ? "border-green-700 bg-green-50" : "border-zinc-200 bg-white shadow-sm"
                   }`}
                 >
                   <span>{a.naziv}</span>
@@ -78,7 +78,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
         {[...korpa].map(([id, s]) => {
           const a = artikli.find((x) => x.id === id)!;
           return (
-            <div key={id} className="flex flex-col gap-3 rounded-2xl border-2 border-zinc-300 p-4">
+            <div key={id} className="flex flex-col gap-3 rounded-2xl border border-zinc-300 p-4 shadow-sm bg-white">
               <input type="hidden" name="artikal" value={id} />
               <input type="hidden" name="pakovanje" value={s.pakovanje} />
               <p className="text-2xl font-bold">{a.naziv}</p>
@@ -92,7 +92,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
                       onClick={() => izmijeni(id, { pakovanje: j.id })}
                       aria-pressed={s.pakovanje === j.id}
                       className={`min-h-14 rounded-xl border-2 px-5 text-xl font-semibold ${
-                        s.pakovanje === j.id ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-300"
+                        s.pakovanje === j.id ? "border-brand bg-brand text-white" : "border-zinc-300 bg-white"
                       }`}
                     >
                       {j.naziv}
@@ -112,7 +112,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
                   onChange={(e) => izmijeni(id, { kolicina: e.target.value })}
                   inputMode="decimal"
                   aria-label={`Količina ${a.naziv}`}
-                  className="min-h-16 w-28 rounded-2xl border-2 border-zinc-300 text-center text-3xl font-bold"
+                  className="min-h-16 w-28 rounded-2xl border-2 border-zinc-300 text-center text-3xl font-bold bg-white"
                 />
                 <button type="button" onClick={() => korak(id, 1)} className={DUGME} aria-label={`Više ${a.naziv}`}>
                   +
@@ -123,7 +123,7 @@ export function ZahtjevForma({ artikli }: { artikli: ArtikalZaUnos[] }) {
                 <button
                   type="button"
                   onClick={() => ukloni(id)}
-                  className="ml-auto min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+                  className="ml-auto min-h-14 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
                 >
                   Ukloni
                 </button>

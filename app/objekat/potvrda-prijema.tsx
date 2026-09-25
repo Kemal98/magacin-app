@@ -45,7 +45,7 @@ export function PotvrdaPrijema({ z }: { z: Zahtjev }) {
                       defaultValue={String(s.izdana_kolicina ?? 0)}
                       inputMode="decimal"
                       aria-label={`Stiglo ${s.naziv}`}
-                      className="min-h-16 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-3xl font-bold"
+                      className="min-h-16 w-28 rounded-xl border-2 border-zinc-300 px-3 text-center text-3xl font-bold bg-white"
                     />
                     <span>{s.pakovanje ?? s.mjera}</span>
                   </label>

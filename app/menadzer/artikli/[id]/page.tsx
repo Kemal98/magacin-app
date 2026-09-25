@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Okvir } from "@/app/_components/okvir";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { ArtikalForma, type ArtikalPodaci } from "./artikal-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Artikal" };
 
@@ -42,9 +42,7 @@ export default async function ArtikalStranica({ params }: { params: Promise<{ id
 
   return (
     <Okvir korisnik={korisnik} naslov={artikal ? "Izmjena artikla" : "Novi artikal"}>
-      <Link href="/menadzer/artikli" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad na artikle
-      </Link>
+      <Nazad href="/menadzer/artikli">Nazad na artikle</Nazad>
       <ArtikalForma artikal={artikal} />
     </Okvir>
   );

@@ -4,6 +4,7 @@ import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 import { AktivnostDugme } from "../_components/aktivnost-dugme";
 import { NazivForma } from "../_components/naziv-forma";
+import { Nazad } from "@/app/_components/nazad";
 
 export const metadata = { title: "Objekti" };
 
@@ -18,11 +19,9 @@ export default async function Stranica() {
 
   return (
     <Okvir korisnik={korisnik} naslov="Objekti">
-      <Link href="/menadzer" className="text-xl font-semibold text-zinc-600 underline">
-        ← Nazad
-      </Link>
+      <Nazad href="/menadzer" />
 
-      <section className="flex flex-col gap-2 rounded-2xl border-2 border-zinc-200 p-4">
+      <section className="flex flex-col gap-2 rounded-2xl border border-zinc-200 p-4 shadow-sm bg-white">
         <h2 className="text-2xl font-semibold">Novi objekat</h2>
         <NazivForma vrsta="objekat" dugme="Dodaj" />
       </section>
@@ -32,18 +31,18 @@ export default async function Stranica() {
         {data.map((z) => (
           <li
             key={z.id}
-            className={`flex flex-wrap items-start gap-3 rounded-2xl border-2 p-4 ${z.aktivan ? "border-zinc-300" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
+            className={`flex flex-wrap items-start gap-3 rounded-2xl border p-4 shadow-sm ${z.aktivan ? "border-zinc-200 bg-white" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
           >
             <NazivForma vrsta="objekat" id={z.id} naziv={z.naziv} dugme="Snimi" />
             <Link
               href={`/menadzer/objekti/${z.id}/smjene`}
-              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
             >
               Smjene
             </Link>
             <Link
               href={`/menadzer/objekti/${z.id}/artikli`}
-              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200 bg-white"
             >
               Artikli
             </Link>

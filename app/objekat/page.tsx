@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
+import { Plocica } from "@/app/_components/plocica";
 import { ZahtjevKartica } from "@/app/_components/zahtjev-prikaz";
 import { PotvrdaPrijema } from "./potvrda-prijema";
 import { kolicina as fmt } from "@/lib/format";
@@ -31,7 +32,7 @@ export default async function ObjekatPocetna({
     <Okvir korisnik={korisnik} naslov="Objekat">
       <Osvjezavac />
       {poslano && (
-        <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
+        <p role="status" className="rounded-2xl border border-green-700 bg-green-50 p-4 text-xl font-semibold shadow-sm">
           Zahtjev je poslan magacinu.
         </p>
       )}
@@ -50,29 +51,14 @@ export default async function ObjekatPocetna({
       )}
       <Link
         href="/objekat/zahtjev"
-        className="flex min-h-24 items-center justify-center rounded-2xl bg-zinc-900 text-3xl font-bold text-white active:bg-zinc-700"
+        className="flex min-h-24 items-center justify-center rounded-2xl bg-brand text-3xl font-bold text-white active:bg-brand-dark"
       >
         Novi zahtjev za robu
       </Link>
-      <nav className="grid gap-3 sm:grid-cols-3">
-        <Link
-          href="/objekat/smjena"
-          className="flex min-h-20 items-center justify-center rounded-2xl border-2 border-zinc-900 text-2xl font-bold active:bg-zinc-200"
-        >
-          Zatvori smjenu
-        </Link>
-        <Link
-          href="/objekat/izuzetak"
-          className="flex min-h-20 items-center justify-center rounded-2xl border-2 border-amber-700 text-2xl font-bold text-amber-900 active:bg-amber-50"
-        >
-          Izuzetak (razbijeno…)
-        </Link>
-        <Link
-          href="/objekat/smjene"
-          className="flex min-h-20 items-center justify-center rounded-2xl border-2 border-zinc-300 text-2xl font-semibold active:bg-zinc-200"
-        >
-          Prethodne smjene
-        </Link>
+      <nav className="grid gap-3 lg:grid-cols-3">
+        <Plocica href="/objekat/smjena" naslov="Zatvori smjenu" opis="Završno stanje" ikona="sat" />
+        <Plocica href="/objekat/izuzetak" naslov="Izuzetak" opis="Razbijeno, proliveno…" ikona="upozorenje" />
+        <Plocica href="/objekat/smjene" naslov="Prethodne smjene" opis="Šta je potrošeno" ikona="stanje" />
       </nav>
 
       <section className="flex flex-col gap-3">
@@ -82,7 +68,7 @@ export default async function ObjekatPocetna({
         ) : (
           <ul className="grid gap-2 sm:grid-cols-2">
             {zaliha.map((z) => (
-              <li key={z.artikal_id} className="flex justify-between rounded-xl border-2 border-zinc-200 p-3 text-xl">
+              <li key={z.artikal_id} className="flex justify-between rounded-xl border-2 border-zinc-200 p-3 text-xl bg-white">
                 <span>{z.naziv}</span>
                 <span className="font-bold">
                   {fmt(Number(z.kolicina))} {z.mjera}
