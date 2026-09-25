@@ -35,3 +35,29 @@ describe.skipIf(!existsSync(FAJL))("uvoz iz stvarnog Excela", () => {
     expect(uvoz.artikli.find((a) => a.naziv === "Banana")?.vrsta).toBe("prehrana");
   });
 });
+
+import { predloziPopis, procitajUtroske } from "../../lib/uvoz/predlozi";
+
+describe.skipIf(!existsSync(FAJL))("prijedlog popisa za ŠANK HOTEL iz stvarnih utrošaka", () => {
+  let utrosci: ReturnType<typeof procitajUtroske>;
+  let uvoz: PripremljenUvoz;
+  beforeAll(() => {
+    const fajl = new Uint8Array(readFileSync(FAJL));
+    utrosci = procitajUtroske(fajl);
+    uvoz = pripremiUvoz(fajl);
+  });
+
+  it("čita sve utroške (26.498) i 3.621 utrošak ŠANK HOTEL", () => {
+    expect(utrosci.length).toBeGreaterThan(26000);
+    expect(utrosci.filter((u) => u.objekat === "ŠANK HOTEL")).toHaveLength(3621);
+  });
+
+  it("prijedlog za ŠANK HOTEL je kratak popis poznatih artikala", () => {
+    const sifrarnik = uvoz.artikli.map((a, i) => ({ id: String(i), naziv: a.naziv }));
+    const p = predloziPopis(utrosci, "ŠANK HOTEL", sifrarnik);
+    expect(p.brojUtrosaka).toBe(3621);
+    expect(p.artikli.length).toBeGreaterThan(20);
+    expect(p.artikli.length).toBeLessThan(200);
+    expect(p.nepoznati).toEqual([]);
+  });
+});

@@ -43,7 +43,7 @@ export type Uloga = "magacioner" | "objekat" | "menadzer";
 /** Pravi prijavnog korisnika (Supabase Auth) i njegov zapis u šemi magacin. */
 export async function napraviKorisnika(
   db: Client,
-  opcije: { ime: string; uloga: Uloga; aktivan?: boolean },
+  opcije: { ime: string; uloga: Uloga; aktivan?: boolean; objekatId?: string | null },
 ): Promise<string> {
   const { rows } = await db.query(
     `insert into auth.users (id, email, aud, role)
@@ -52,8 +52,8 @@ export async function napraviKorisnika(
   );
   const id: string = rows[0].id;
   await db.query(
-    `insert into magacin.korisnik (id, ime, uloga, aktivan) values ($1, $2, $3, $4)`,
-    [id, opcije.ime, opcije.uloga, opcije.aktivan ?? true],
+    `insert into magacin.korisnik (id, ime, uloga, aktivan, objekat_id) values ($1, $2, $3, $4, $5)`,
+    [id, opcije.ime, opcije.uloga, opcije.aktivan ?? true, opcije.objekatId ?? null],
   );
   return id;
 }

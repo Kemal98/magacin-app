@@ -3,7 +3,7 @@
 --
 --   Menadžer:            menadzer@magacin.local  lozinka: menadzer123
 --   Magacioner (PIN):    "Test Magacioner"       PIN: 111111
---   Objekat (PIN):       "ŠANK HOTEL (test)"     PIN: 222222
+--   Objekat (PIN):       "ŠANK HOTEL (test)"     PIN: 222222 (vezan za objekat ŠANK HOTEL)
 --
 -- Prijava PIN-om ide preko adrese <id>@korisnik.magacin.local; PIN je lozinka.
 
@@ -39,7 +39,12 @@ select pg_temp.napravi_korisnika(
   '22222222-2222-4222-8222-222222222222',
   '22222222-2222-4222-8222-222222222222@korisnik.magacin.local', '111111',
   'Test Magacioner', 'magacioner');
+insert into magacin.objekat (id, naziv) values ('44444444-4444-4444-8444-444444444444', 'ŠANK HOTEL');
+
 select pg_temp.napravi_korisnika(
   '33333333-3333-4333-8333-333333333333',
   '33333333-3333-4333-8333-333333333333@korisnik.magacin.local', '222222',
   'ŠANK HOTEL (test)', 'objekat');
+
+update magacin.korisnik set objekat_id = '44444444-4444-4444-8444-444444444444'
+where id = '33333333-3333-4333-8333-333333333333';

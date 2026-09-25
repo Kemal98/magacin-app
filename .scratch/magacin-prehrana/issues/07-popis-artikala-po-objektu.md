@@ -4,8 +4,8 @@
 
 **Blocked by:** 03 (Šifrarnik: artikli, objekti, dobavljači), 04 (Uvoz artikala, objekata i dobavljača iz Excela)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Objekat vidi samo artikle koje mu je zadao menadžer
-- [ ] Prijedlog za ŠANK HOTEL izveden iz stvarnih utrošaka u Excelu
-- [ ] Menadžer može dodati i ukloniti artikle na popisu objekta
+- [x] Objekat vidi samo artikle koje mu je zadao menadžer
+- [x] Prijedlog za ŠANK HOTEL izveden iz stvarnih utrošaka u Excelu
+- [x] Menadžer može dodati i ukloniti artikle na popisu objekta

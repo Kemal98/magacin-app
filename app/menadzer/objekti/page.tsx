@@ -35,6 +35,12 @@ export default async function Stranica() {
             className={`flex flex-wrap items-start gap-3 rounded-2xl border-2 p-4 ${z.aktivan ? "border-zinc-300" : "border-zinc-200 bg-zinc-100 text-zinc-500"}`}
           >
             <NazivForma vrsta="objekat" id={z.id} naziv={z.naziv} dugme="Snimi" />
+            <Link
+              href={`/menadzer/objekti/${z.id}/artikli`}
+              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+            >
+              Artikli
+            </Link>
             <AktivnostDugme vrsta="objekat" id={z.id} aktivan={z.aktivan} />
             {!z.aktivan && <span className="self-center text-lg font-semibold">isključen</span>}
           </li>
