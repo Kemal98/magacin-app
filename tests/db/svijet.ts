@@ -77,3 +77,65 @@ export async function odbij(db: Client, zahtjev: string, razlog: string) {
 
 export const jedan = async (db: Client, id: string) => (await zahtjevi(db)).find((z) => z.id === id)!;
 
+/** Roba ulazi u zalihu objekta kroz cijeli tok: prijem, zahtjev, odobravanje, izdavanje i STIGLO. */
+export async function uZalihuObjekta(db: Client, s: Svijet, artikal: string, kolicina: number, cijena: number) {
+  await kao(db, s.magacioner);
+  await db.query("select magacin.unesi_prijem($1, $2::jsonb)", [
+    s.dobavljac,
+    JSON.stringify([{ artikal_id: artikal, kolicina, cijena }]),
+  ]);
+  await kao(db, s.sankOsoblje);
+  const id = await posalji(db, [{ artikal_id: artikal, kolicina }]);
+  await kao(db, s.magacioner);
+  await odobri(db, id);
+  await db.query("select magacin.izdaj_zahtjev($1)", [id]);
+  await kao(db, s.sankOsoblje);
+  await db.query("select magacin.potvrdi_primljeno($1)", [id]);
+  return id;
+}
+
+/** Zahtjev izdat, ali objekat još nije potvrdio da je roba stigla. */
+export async function naDostavi(db: Client, s: Svijet, artikal: string, kolicina: number, cijena: number) {
+  await kao(db, s.magacioner);
+  await db.query("select magacin.unesi_prijem($1, $2::jsonb)", [
+    s.dobavljac,
+    JSON.stringify([{ artikal_id: artikal, kolicina, cijena }]),
+  ]);
+  await kao(db, s.sankOsoblje);
+  const id = await posalji(db, [{ artikal_id: artikal, kolicina }]);
+  await kao(db, s.magacioner);
+  await odobri(db, id);
+  await db.query("select magacin.izdaj_zahtjev($1)", [id]);
+  return id;
+}
+
+export type Unos = { artikal_id: string; zavrsno: number; razlog?: string };
+
+export async function zatvori(db: Client, ime: string, stanje: Unos[]): Promise<string> {
+  const { rows } = await db.query("select magacin.zatvori_smjenu($1, $2::jsonb) as id", [ime, JSON.stringify(stanje)]);
+  return rows[0].id;
+}
+
+/** Zatvorene smjene kako ih vidi trenutno prijavljena osoba, najnovija prva. */
+export async function smjene(db: Client, objekat: string | null = null) {
+  return (await db.query("select * from magacin.smjene_objekta($1, 50)", [objekat])).rows;
+}
+
+export const stavka = (smjena: { stavke: { artikal: string }[] }, naziv: string) =>
+  smjena.stavke.find((x) => x.artikal === naziv) as Record<string, string | number | null>;
+
+export const zalihaObjekta = async (db: Client) => {
+  const { rows } = await db.query("select * from magacin.zaliha_objekta()");
+  return new Map(rows.map((r) => [r.naziv as string, Number(r.kolicina)]));
+};
+
+/** Knjiga objekta čita magacioner (sadrži cijene). */
+export async function knjigaObjekta(db: Client, s: Svijet, vrsta?: string) {
+  await kao(db, s.magacioner);
+  const { rows } = await db.query(
+    "select vrsta, kolicina, cijena, napomena from magacin.kretanje_objekta where objekat_id = $1 and ($2::text is null or vrsta::text = $2) order by id",
+    [s.sank, vrsta ?? null],
+  );
+  return rows.map((r) => ({ ...r, kolicina: Number(r.kolicina), cijena: Number(r.cijena) }));
+}
+

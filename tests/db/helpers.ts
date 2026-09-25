@@ -35,7 +35,7 @@ export async function uTransakciji<T>(
     // na testove. Sve se poništava s transakcijom, pa razvojna baza ostaje netaknuta.
     // Knjiga se ne briše redom (nepromjenjiva je), pa se prazni cijela, i to prvo.
     await db.query(
-      "truncate magacin.kretanje_objekta, magacin.zaliha_objekta, magacin.zahtjev_stavka, magacin.zahtjev, magacin.kretanje_magacina, magacin.prijem, magacin.zaliha_magacina",
+      "truncate magacin.smjena_stavka, magacin.smjena, magacin.smjena_raspored, magacin.kretanje_objekta, magacin.zaliha_objekta, magacin.zahtjev_stavka, magacin.zahtjev, magacin.kretanje_magacina, magacin.prijem, magacin.zaliha_magacina",
     );
     await db.query("delete from auth.users");
     await db.query("delete from magacin.artikal");

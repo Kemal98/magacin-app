@@ -5,6 +5,7 @@ import { zahtijevajUlogu } from "@/lib/korisnik";
 export const metadata = { title: "Menadžer" };
 
 const STAVKE = [
+  { href: "/menadzer/smjene", naslov: "Smjene i potrošnja", opis: "Trošak po smjeni, upozorenja" },
   { href: "/menadzer/razlike", naslov: "Razlike pri prijemu", opis: "Poslano i stiglo se ne poklapa" },
   { href: "/menadzer/stanje", naslov: "Stanje magacina", opis: "Količine i vrijednost zaliha" },
   { href: "/menadzer/artikli", naslov: "Artikli", opis: "Mjere, pakovanja, bar kodovi, minimum" },

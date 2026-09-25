@@ -4,10 +4,10 @@
 
 **Blocked by:** 10 (Primljeno i razlika pri prijemu)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Smjena se ne može zatvoriti bez završnog stanja i imena osobe
-- [ ] Potrošnja se računa iz početnog, primljenog i završnog stanja
-- [ ] Trošak potrošnje ide po prosječnoj cijeni izdatih količina u zalihi objekta
-- [ ] Početno stanje sljedeće smjene je završno prethodne
-- [ ] Testovi provjeravaju da kasnija promjena cijene u magacinu ne mijenja već knjižen trošak
+- [x] Smjena se ne može zatvoriti bez završnog stanja i imena osobe
+- [x] Potrošnja se računa iz početnog, primljenog i završnog stanja
+- [x] Trošak potrošnje ide po prosječnoj cijeni izdatih količina u zalihi objekta
+- [x] Početno stanje sljedeće smjene je završno prethodne
+- [x] Testovi provjeravaju da kasnija promjena cijene u magacinu ne mijenja već knjižen trošak

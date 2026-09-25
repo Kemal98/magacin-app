@@ -36,6 +36,12 @@ export default async function Stranica() {
           >
             <NazivForma vrsta="objekat" id={z.id} naziv={z.naziv} dugme="Snimi" />
             <Link
+              href={`/menadzer/objekti/${z.id}/smjene`}
+              className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+            >
+              Smjene
+            </Link>
+            <Link
               href={`/menadzer/objekti/${z.id}/artikli`}
               className="flex min-h-14 items-center rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
             >

@@ -4,9 +4,9 @@
 
 **Blocked by:** 11 (Smjena i evidencija potrošnje)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Izuzetak traži razlog i vodi se odvojeno od obične potrošnje
-- [ ] Veće završno stanje od mogućeg traži razlog i ne blokira zatvaranje smjene
-- [ ] Menadžer vidi upozorenje s razlogom
-- [ ] Izuzetak se ulazi u trošak objekta po cijeni pri izdavanju
+- [x] Izuzetak traži razlog i vodi se odvojeno od obične potrošnje
+- [x] Veće završno stanje od mogućeg traži razlog i ne blokira zatvaranje smjene
+- [x] Menadžer vidi upozorenje s razlogom
+- [x] Izuzetak se ulazi u trošak objekta po cijeni pri izdavanju
