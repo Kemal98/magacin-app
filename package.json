@@ -12,7 +12,7 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "db:start": "supabase start -x studio,imgproxy,vector,logflare,mailpit,edge-runtime,supavisor,realtime,storage-api,postgres-meta,kong,gotrue,postgrest",
+    "db:start": "supabase start -x studio,imgproxy,vector,logflare,mailpit,edge-runtime,supavisor,realtime,storage-api,postgres-meta",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset"
   },

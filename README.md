@@ -32,7 +32,14 @@ Ako `docker` nije u PATH-u, dodaj `/Applications/Docker.app/Contents/Resources/b
 
 ## Napomena o lokalnom Supabaseu
 
-`db:start` trenutno pokreće samo bazu (bez API gatewaya, prijave i ostalih servisa), jer je to dovoljno
-za testove poslovnih pravila. Slika `kong` nema arm64 verziju i ne radi na Apple Silicon Macu bez
-Rosetta emulacije (Docker Desktop → Settings → General → "Use Rosetta"). Kad zatrebaju prijava i API
-(zadatak 02), treba to riješiti i ukloniti isključene servise iz skripte `db:start`.
+`db:start` pokreće bazu, API gateway (kong), prijavu (gotrue) i REST (postgrest); ostali servisi su
+isključeni jer nisu potrebni. Na Apple Silicon Macu je arm64 slika `kong` pokvarena
+(`exec format error`), a amd64 verzija radi kroz emulaciju. Zato se jednom lokalno napravi
+amd64 slika istog imena:
+
+```bash
+printf 'FROM --platform=linux/amd64 public.ecr.aws/supabase/kong:2.8.1\n' \
+  | docker build -t public.ecr.aws/supabase/kong:2.8.1 -
+```
+
+Ako Supabase javi `exec format error` za kong, ponovi tu naredbu (ostaje samo na tvom računaru).
