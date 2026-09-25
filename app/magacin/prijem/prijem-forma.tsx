@@ -2,18 +2,29 @@
 
 import { useActionState, useId, useState } from "react";
 import { unesiPrijem } from "@/app/actions/prijem";
+import { KameraSkener } from "@/app/_components/kamera-skener";
+import { pretrazi, type ArtikalZaUnos } from "@/lib/bar-kod";
 import { km, kolicina as fmtKolicina } from "@/lib/format";
 
-export type ArtikalZaPrijem = {
-  id: string;
-  naziv: string;
-  mjera: string;
-  bar_kod: string | null;
-  pakovanja: { id: string; naziv: string; faktor: number }[];
+type Red = {
+  tekst: string; // ono što piše u polju (naziv ili kod koji se skenira)
+  artikalId: string;
+  pakovanje: string;
+  kolicina: string;
+  cijena: string;
+  poruka: string | null;
+  fokus: boolean; // novi red preuzima fokus, da se odmah može skenirati
 };
 
-type Red = { tekst: string; pakovanje: string; kolicina: string; cijena: string };
-const PRAZAN: Red = { tekst: "", pakovanje: "", kolicina: "", cijena: "" };
+const noviRed = (fokus = false): Red => ({
+  tekst: "",
+  artikalId: "",
+  pakovanje: "",
+  kolicina: "",
+  cijena: "",
+  poruka: null,
+  fokus,
+});
 const POLJE = "min-h-14 w-full rounded-xl border-2 border-zinc-300 px-4 text-xl";
 
 const broj = (t: string) => Number(t.trim().replace(",", "."));
@@ -22,32 +33,51 @@ export function PrijemForma({
   artikli,
   dobavljaci,
 }: {
-  artikli: ArtikalZaPrijem[];
+  artikli: ArtikalZaUnos[];
   dobavljaci: { id: string; naziv: string }[];
 }) {
   const [stanje, akcija, radi] = useActionState(unesiPrijem, undefined);
-  const [redovi, setRedovi] = useState<Red[]>([{ ...PRAZAN }]);
+  const [redovi, setRedovi] = useState<Red[]>([noviRed()]);
+  const [kameraZaRed, setKameraZaRed] = useState<number | null>(null);
   const lista = useId();
 
-  // Artikal se prepoznaje po tačnom nazivu ili bar kodu (i pakovanja).
-  const nadji = (tekst: string) => {
-    const t = tekst.trim().toLowerCase();
-    if (!t) return undefined;
-    return (
-      artikli.find((a) => a.naziv.toLowerCase() === t) ??
-      artikli.find((a) => a.bar_kod === tekst.trim())
-    );
+  const izmijeniRed = (i: number, promjena: Partial<Red>) =>
+    setRedovi((stari) => stari.map((r, j) => (j === i ? { ...r, ...promjena } : r)));
+
+  /** Kucanje: tačan naziv se prepoznaje odmah; bar kod se prepoznaje tek na Enter ili napuštanje polja. */
+  const napisano = (i: number, tekst: string) => {
+    const nadjen = artikli.find((a) => a.naziv.trim().toLowerCase() === tekst.trim().toLowerCase());
+    izmijeniRed(i, { tekst, artikalId: nadjen?.id ?? "", pakovanje: "", poruka: null });
   };
 
-  const izmijeni = (i: number, polje: keyof Red, v: string) =>
-    setRedovi((stari) =>
-      stari.map((r, j) => {
-        if (j !== i) return r;
-        const novi = { ...r, [polje]: v };
-        if (polje === "tekst") novi.pakovanje = ""; // druga vrsta artikla, druga pakovanja
-        return novi;
-      }),
-    );
+  /** Skener, kamera ili ručni unos su gotovi: pronađi artikal i popuni red. */
+  const razrijesi = (i: number, unos: string): boolean => {
+    const r = pretrazi(artikli, unos);
+    if (r.status === "nadjen") {
+      izmijeniRed(i, {
+        tekst: r.artikal.naziv,
+        artikalId: r.artikal.id,
+        pakovanje: r.pakovanjeId ?? "",
+        poruka: null,
+      });
+      return true;
+    }
+    izmijeniRed(i, {
+      artikalId: "",
+      pakovanje: "",
+      poruka:
+        r.status === "nepoznat_kod"
+          ? `Bar kod ${r.kod} nije pronađen u šifrarniku. Izaberite artikal s liste ili ga dodaje menadžer.`
+          : r.status === "nepoznat_naziv"
+            ? "Artikal nije pronađen. Izaberite naziv s liste."
+            : null,
+    });
+    return false;
+  };
+
+  const fokusirajKolicinu = (i: number) =>
+    // Čeka da se red ponovo iscrta s popunjenim artiklom.
+    setTimeout(() => document.getElementById(`kolicina-${i}`)?.focus(), 0);
 
   return (
     <form action={akcija} className="flex flex-col gap-5">
@@ -73,7 +103,7 @@ export function PrijemForma({
 
       <div className="flex flex-col gap-4">
         {redovi.map((r, i) => {
-          const artikal = nadji(r.tekst);
+          const artikal = artikli.find((a) => a.id === r.artikalId);
           const pak = artikal?.pakovanja.find((p) => p.id === r.pakovanje);
           const faktor = pak?.faktor ?? 1;
           const kol = broj(r.kolicina);
@@ -85,19 +115,43 @@ export function PrijemForma({
           return (
             <fieldset key={i} className="flex flex-col gap-3 rounded-2xl border-2 border-zinc-200 p-4">
               <legend className="px-2 text-lg font-semibold">Stavka {i + 1}</legend>
-              <input type="hidden" name="artikal" value={artikal?.id ?? ""} />
-              <label className="flex flex-col gap-1 text-lg">
-                Artikal (upišite naziv ili izaberite)
-                <input
-                  list={lista}
-                  value={r.tekst}
-                  onChange={(e) => izmijeni(i, "tekst", e.target.value)}
-                  className={POLJE}
-                  autoComplete="off"
-                />
-              </label>
-              {r.tekst.trim() && !artikal && (
-                <p className="text-lg text-red-700">Artikal nije pronađen. Izaberite naziv s liste.</p>
+              <input type="hidden" name="artikal" value={r.artikalId} />
+              <div className="flex flex-col gap-1 text-lg">
+                <label htmlFor={`artikal-${i}`}>Artikal: skenirajte bar kod, upišite naziv ili izaberite s liste</label>
+                <div className="flex gap-3">
+                  <input
+                    id={`artikal-${i}`}
+                    list={lista}
+                    value={r.tekst}
+                    autoFocus={r.fokus}
+                    onChange={(e) => napisano(i, e.target.value)}
+                    onKeyDown={(e) => {
+                      // Skener na kraju šalje Enter; on ne smije poslati cijelu formu.
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (razrijesi(i, e.currentTarget.value)) fokusirajKolicinu(i);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      if (!r.artikalId && e.currentTarget.value.trim()) razrijesi(i, e.currentTarget.value);
+                    }}
+                    className={POLJE}
+                    autoComplete="off"
+                    inputMode="text"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setKameraZaRed(i)}
+                    className="min-h-14 shrink-0 rounded-xl border-2 border-zinc-300 px-4 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
+                  >
+                    Kamera
+                  </button>
+                </div>
+              </div>
+              {r.poruka && (
+                <p role="alert" className="text-lg font-semibold text-red-700">
+                  {r.poruka}
+                </p>
               )}
               <div className="grid gap-3 sm:grid-cols-3">
                 <label className="flex flex-col gap-1 text-lg">
@@ -105,7 +159,7 @@ export function PrijemForma({
                   <select
                     name="pakovanje"
                     value={r.pakovanje}
-                    onChange={(e) => izmijeni(i, "pakovanje", e.target.value)}
+                    onChange={(e) => izmijeniRed(i, { pakovanje: e.target.value })}
                     className={POLJE}
                     disabled={!artikal}
                   >
@@ -120,9 +174,10 @@ export function PrijemForma({
                 <label className="flex flex-col gap-1 text-lg">
                   Količina
                   <input
+                    id={`kolicina-${i}`}
                     name="kolicina"
                     value={r.kolicina}
-                    onChange={(e) => izmijeni(i, "kolicina", e.target.value)}
+                    onChange={(e) => izmijeniRed(i, { kolicina: e.target.value })}
                     inputMode="decimal"
                     className={POLJE}
                   />
@@ -132,7 +187,7 @@ export function PrijemForma({
                   <input
                     name="cijena"
                     value={r.cijena}
-                    onChange={(e) => izmijeni(i, "cijena", e.target.value)}
+                    onChange={(e) => izmijeniRed(i, { cijena: e.target.value })}
                     inputMode="decimal"
                     className={POLJE}
                   />
@@ -155,7 +210,7 @@ export function PrijemForma({
 
       <button
         type="button"
-        onClick={() => setRedovi((stari) => [...stari, { ...PRAZAN }])}
+        onClick={() => setRedovi((stari) => [...stari, noviRed(true)])}
         className="min-h-14 self-start rounded-xl border-2 border-zinc-300 px-5 text-lg font-semibold text-zinc-700 active:bg-zinc-200"
       >
         + Dodaj artikal
@@ -173,6 +228,15 @@ export function PrijemForma({
       >
         {radi ? "Snimam…" : "Snimi prijem"}
       </button>
+
+      {kameraZaRed !== null && (
+        <KameraSkener
+          onKod={(kod) => {
+            if (razrijesi(kameraZaRed, kod)) fokusirajKolicinu(kameraZaRed);
+          }}
+          onZatvori={() => setKameraZaRed(null)}
+        />
+      )}
     </form>
   );
 }

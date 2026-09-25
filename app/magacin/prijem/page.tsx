@@ -3,7 +3,8 @@ import { Okvir } from "@/app/_components/okvir";
 import { datumVrijeme, km } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
-import { PrijemForma, type ArtikalZaPrijem } from "./prijem-forma";
+import type { ArtikalZaUnos } from "@/lib/bar-kod";
+import { PrijemForma } from "./prijem-forma";
 
 export const metadata = { title: "Prijem robe" };
 
@@ -28,7 +29,7 @@ export default async function PrijemStranica({
   const [artikliRes, dobavljaciRes, zadnjiRes] = await Promise.all([
     supabase
       .from("artikal")
-      .select("id, naziv, mjera, bar_kod, pakovanje(id, naziv, faktor)")
+      .select("id, naziv, mjera, bar_kod, pakovanje(id, naziv, faktor, bar_kod)")
       .eq("vrsta", "prehrana")
       .eq("aktivan", true)
       .order("naziv"),
@@ -39,12 +40,17 @@ export default async function PrijemStranica({
     if (r.error) throw new Error(`Učitavanje nije uspjelo: ${r.error.message}`);
   }
 
-  const artikli: ArtikalZaPrijem[] = artikliRes.data!.map((a) => ({
+  const artikli: ArtikalZaUnos[] = artikliRes.data!.map((a) => ({
     id: a.id,
     naziv: a.naziv,
     mjera: a.mjera,
     bar_kod: a.bar_kod,
-    pakovanja: a.pakovanje.map((p) => ({ id: p.id, naziv: p.naziv, faktor: Number(p.faktor) })),
+    pakovanja: a.pakovanje.map((p) => ({
+      id: p.id,
+      naziv: p.naziv,
+      faktor: Number(p.faktor),
+      bar_kod: p.bar_kod,
+    })),
   }));
 
   return (
