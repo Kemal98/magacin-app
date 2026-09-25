@@ -20,13 +20,13 @@ export async function uTransakciji<T>(
   await db.connect();
   try {
     await db.query("begin");
-    // Razvojni seed (korisnici) ne smije uticati na testove; poništava se s ostatkom.
-    await db.query("delete from auth.users");
-    // Knjiga se ne briše redom (nepromjenjiva je), pa se prazni cijela.
+    // Razvojni podaci (seed, uvezeni šifrarnik, ručno probani prijemi) ne smiju uticati
+    // na testove. Sve se poništava s transakcijom, pa razvojna baza ostaje netaknuta.
+    // Knjiga se ne briše redom (nepromjenjiva je), pa se prazni cijela, i to prvo.
     await db.query(
       "truncate magacin.kretanje_magacina, magacin.prijem, magacin.zaliha_magacina",
     );
-    // Isto vrijedi za šifrarnik uvezen u razvojnu bazu.
+    await db.query("delete from auth.users");
     await db.query("delete from magacin.artikal");
     await db.query("delete from magacin.objekat");
     await db.query("delete from magacin.dobavljac");
