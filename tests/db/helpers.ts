@@ -22,6 +22,10 @@ export async function uTransakciji<T>(
     await db.query("begin");
     // Razvojni seed (korisnici) ne smije uticati na testove; poništava se s ostatkom.
     await db.query("delete from auth.users");
+    // Isto vrijedi za šifrarnik uvezen u razvojnu bazu.
+    await db.query("delete from magacin.artikal");
+    await db.query("delete from magacin.objekat");
+    await db.query("delete from magacin.dobavljac");
     return await test(db);
   } finally {
     // Ako je veza pukla, poništavanje ne smije prekriti pravu grešku testa.

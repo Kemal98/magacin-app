@@ -8,6 +8,7 @@ const STAVKE = [
   { href: "/menadzer/artikli", naslov: "Artikli", opis: "Mjere, pakovanja, bar kodovi, minimum" },
   { href: "/menadzer/objekti", naslov: "Objekti", opis: "Kuhinje, šankovi, hoteli" },
   { href: "/menadzer/dobavljaci", naslov: "Dobavljači", opis: "Firme od kojih se nabavlja" },
+  { href: "/menadzer/uvoz", naslov: "Uvoz iz Excela", opis: "Jednokratni uvoz šifrarnika" },
 ];
 
 export default async function MenadzerPocetna() {
@@ -15,7 +16,7 @@ export default async function MenadzerPocetna() {
   return (
     <Okvir korisnik={korisnik} naslov="Pregled">
       <h2 className="text-2xl font-semibold">Šifrarnik</h2>
-      <nav className="grid gap-4 sm:grid-cols-3">
+      <nav className="grid gap-4 sm:grid-cols-2">
         {STAVKE.map((s) => (
           <Link
             key={s.href}
