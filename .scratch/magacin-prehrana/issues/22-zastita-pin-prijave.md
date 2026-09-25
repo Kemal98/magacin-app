@@ -4,10 +4,10 @@
 
 **Blocked by:** 02 (Prijava i uloge), 21 (Upravljanje korisnicima)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Poslije određenog broja uzastopnih pogrešnih PIN-ova račun se privremeno zaključava (npr. 5 pokušaja, 15 minuta)
-- [ ] Zaključan račun jasno javlja razlog i ne pokazuje da li je PIN blizu tačnog
-- [ ] Menadžer vidi zaključane račune i može ih odmah otključati
-- [ ] Uspješna prijava poništava brojač pogrešnih pokušaja
-- [ ] Testovi u bazi pokrivaju zaključavanje, isteka vremena i otključavanje
+- [x] Poslije određenog broja uzastopnih pogrešnih PIN-ova račun se privremeno zaključava (npr. 5 pokušaja, 15 minuta)
+- [x] Zaključan račun jasno javlja razlog i ne pokazuje da li je PIN blizu tačnog
+- [x] Menadžer vidi zaključane račune i može ih odmah otključati
+- [x] Uspješna prijava poništava brojač pogrešnih pokušaja
+- [x] Testovi u bazi pokrivaju zaključavanje, isteka vremena i otključavanje

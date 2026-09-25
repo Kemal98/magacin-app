@@ -32,6 +32,7 @@ export default async function MenadzerPocetna() {
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold text-zinc-500">Šifrarnik</h2>
         <nav className="grid gap-4 sm:grid-cols-2">
+          <Plocica href="/menadzer/korisnici" naslov="Korisnici" opis="Magacioneri, osoblje objekata, PIN-ovi, zaključani računi" ikona="artikli" />
           <Plocica href="/menadzer/artikli" naslov="Artikli" opis="Mjere, pakovanja, bar kodovi, minimum" ikona="artikli" />
           <Plocica href="/menadzer/objekti" naslov="Objekti" opis="Popis artikala i smjene po objektu" ikona="objekti" />
           <Plocica href="/menadzer/dobavljaci" naslov="Dobavljači" opis="Firme od kojih se nabavlja" ikona="dobavljaci" />

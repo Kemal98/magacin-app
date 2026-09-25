@@ -4,10 +4,10 @@
 
 **Blocked by:** 02 (Prijava i uloge), 03 (Šifrarnik: artikli, objekti, dobavljači)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Menadžer dodaje korisnika s imenom, ulogom i PIN-om (magacioner, objekat) ili lozinkom (menadžer)
-- [ ] Osoblje objekta se veže za objekat iz šifrarnika
-- [ ] Menadžer mijenja ime, PIN i lozinku i isključuje korisnika
-- [ ] Isključen korisnik nestaje s ekrana za prijavu i njegova prijava se odbija
-- [ ] Samo menadžer može upravljati korisnicima
+- [x] Menadžer dodaje korisnika s imenom, ulogom i PIN-om (magacioner, objekat) ili lozinkom (menadžer)
+- [x] Osoblje objekta se veže za objekat iz šifrarnika
+- [x] Menadžer mijenja ime, PIN i lozinku i isključuje korisnika
+- [x] Isključen korisnik nestaje s ekrana za prijavu i njegova prijava se odbija
+- [x] Samo menadžer može upravljati korisnicima

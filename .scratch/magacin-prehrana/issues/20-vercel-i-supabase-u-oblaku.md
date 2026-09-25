@@ -12,3 +12,4 @@
 - [ ] Ključevi i lozinke nisu u repozitoriju (samo u okruženju)
 - [ ] U Supabase projektu u oblaku je javna registracija isključena (Authentication → Sign In / Providers → "Allow new users to sign up" isključeno), kao i u lokalnoj konfiguraciji
 - [ ] Šema `magacin` je izložena kroz API u oblaku (Settings → API → Exposed schemas)
+- [ ] U Vercelu je postavljen `SUPABASE_SERVICE_ROLE_KEY` (tajno, bez `NEXT_PUBLIC_`); bez njega prijava ne radi (zadaci 21 i 22)

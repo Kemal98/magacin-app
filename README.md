@@ -25,6 +25,14 @@ Razvojni korisnici (samo lokalno, iz `supabase/seed.sql`): menadžer `menadzer@m
 `menadzer123`, "Test Magacioner" PIN `111111`, "ŠANK HOTEL (test)" PIN `222222`.
 Nakon `npm run db:reset` seed se ponovo primijeni.
 
+## Tajni ključ za server
+
+Upravljanje korisnicima i zaštita PIN prijave koriste Supabase administratorski API, pa server treba
+`SUPABASE_SERVICE_ROLE_KEY` (u `.env.local`; lokalno je `SERVICE_ROLE_KEY` iz `npx supabase status -o env`).
+Ključ zaobilazi sva pravila pristupa: **nikad ga ne stavljaj u preglednik (bez `NEXT_PUBLIC_`), u git ni u poruke.**
+Bez njega prijava ne radi (zaključavanje po računu je obavezno). Isti ključ treba postaviti u Vercelu (zadatak 20).
+Nakon promjene `.env.local` restartuj `npm run dev`.
+
 Lokalna baza: `postgresql://postgres:postgres@127.0.0.1:54322/postgres`
 (može se promijeniti varijablom `DATABASE_URL`).
 
