@@ -105,3 +105,25 @@ export async function izdajZahtjev(
   revalidatePath("/magacin", "layout");
   return undefined;
 }
+
+/** Objekat potvrđuje da je roba stigla; količine (primljeno_<stavka>) se šalju samo ako se razlikuju. */
+export async function potvrdiPrimljeno(
+  zahtjevId: string,
+  _stanje: StanjeForme,
+  forma: FormData,
+): Promise<StanjeForme> {
+  await zahtijevajUlogu("objekat");
+  if (!UUID.test(zahtjevId)) return { greska: "Nepoznat zahtjev." };
+  const stavke = [];
+  for (const [ime, vrijednost] of forma.entries()) {
+    if (!ime.startsWith("primljeno_")) continue;
+    const kol = broj(String(vrijednost));
+    if (!Number.isFinite(kol) || kol < 0) return { greska: "Količina mora biti broj, nula ili veći." };
+    stavke.push({ stavka_id: ime.slice("primljeno_".length), kolicina: kol });
+  }
+  const supabase = await napraviServerKlijent();
+  const { error } = await supabase.rpc("potvrdi_primljeno", { p_zahtjev: zahtjevId, p_stavke: stavke });
+  if (error) return { greska: poruka(error) };
+  revalidatePath("/objekat", "layout");
+  return undefined;
+}

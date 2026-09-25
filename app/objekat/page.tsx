@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Okvir } from "@/app/_components/okvir";
 import { Osvjezavac } from "@/app/_components/osvjezavac";
 import { ZahtjevKartica } from "@/app/_components/zahtjev-prikaz";
+import { PotvrdaPrijema } from "./potvrda-prijema";
 import { kolicina as fmt } from "@/lib/format";
 import { zahtijevajUlogu } from "@/lib/korisnik";
 import { napraviServerKlijent } from "@/lib/supabase/server";
@@ -16,7 +17,9 @@ export default async function ObjekatPocetna({
 }) {
   const korisnik = await zahtijevajUlogu("objekat");
   const { poslano } = await searchParams;
-  const zahtjevi = await ucitajZahtjeve(undefined, 30);
+  const svi = await ucitajZahtjeve(undefined, 30);
+  const naDostavi = svi.filter((z) => z.status === "na_dostavi");
+  const zahtjevi = svi.filter((z) => z.status !== "na_dostavi");
   const supabase = await napraviServerKlijent();
   const { data: zalihaPodaci, error: zalihaGreska } = await supabase.rpc("zaliha_objekta");
   if (zalihaGreska) throw new Error(`Učitavanje zalihe nije uspjelo: ${zalihaGreska.message}`);
@@ -29,6 +32,13 @@ export default async function ObjekatPocetna({
         <p role="status" className="rounded-2xl border-2 border-green-700 bg-green-50 p-4 text-xl font-semibold">
           Zahtjev je poslan magacinu.
         </p>
+      )}
+      {naDostavi.length > 0 && (
+        <ul className="flex flex-col gap-4">
+          {naDostavi.map((z) => (
+            <PotvrdaPrijema key={z.id} z={z} />
+          ))}
+        </ul>
       )}
       <Link
         href="/objekat/zahtjev"

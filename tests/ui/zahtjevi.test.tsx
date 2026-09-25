@@ -65,15 +65,17 @@ const zahtjev: Zahtjev = {
   razlog: null,
   izdao: null,
   izdano_vrijeme: null,
+  primio: null,
+  primljeno_vrijeme: null,
   stavke: [
     {
       id: "s1", artikal_id: "a1", naziv: "Kafa", mjera: "kg", pakovanje: "kutija", faktor: 10,
-      trazena_kolicina: 3, trazena_osnovna: 30, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null,
+      trazena_kolicina: 3, trazena_osnovna: 30, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null, primljena_kolicina: null, primljena_osnovna: null, razlika_osnovna: null,
       bar_kod: "3850001", pakovanje_bar_kod: "3850099", na_stanju: 12,
     },
     {
       id: "s2", artikal_id: "a2", naziv: "Mlijeko", mjera: "l", pakovanje: null, faktor: null,
-      trazena_kolicina: 5, trazena_osnovna: 5, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null,
+      trazena_kolicina: 5, trazena_osnovna: 5, odobrena_kolicina: null, odobrena_osnovna: null, izdana_kolicina: null, izdana_osnovna: null, primljena_kolicina: null, primljena_osnovna: null, razlika_osnovna: null,
       bar_kod: null, pakovanje_bar_kod: null, na_stanju: 40,
     },
   ],

@@ -4,9 +4,9 @@
 
 **Blocked by:** 09 (Izdavanje ("na dostavi"))
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Veliko dugme "STIGLO" potvrđuje primljeno i status postaje "primljeno"
-- [ ] Ako je količina drugačija, upisuje se stvarna količina i zapisuje razlika
-- [ ] Magacioner i menadžer vide razlike pri prijemu
-- [ ] Zaliha objekta se ažurira prema potvrđenoj količini
+- [x] Veliko dugme "STIGLO" potvrđuje primljeno i status postaje "primljeno"
+- [x] Ako je količina drugačija, upisuje se stvarna količina i zapisuje razlika
+- [x] Magacioner i menadžer vide razlike pri prijemu
+- [x] Zaliha objekta se ažurira prema potvrđenoj količini

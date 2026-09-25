@@ -6,6 +6,7 @@ const BOJA_STATUSA = {
   odobren: "bg-green-100 text-green-900 border-green-700",
   odbijen: "bg-red-100 text-red-900 border-red-700",
   na_dostavi: "bg-blue-100 text-blue-900 border-blue-700",
+  primljeno: "bg-green-100 text-green-900 border-green-700",
 } as const;
 
 export function StatusOznaka({ status }: { status: Zahtjev["status"] }) {
@@ -37,11 +38,13 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
 
       <ul className="flex flex-col gap-1 text-xl">
         {z.stavke.map((s) => {
-          const krenulo = z.status === "na_dostavi";
+          const primljeno = z.status === "primljeno";
+          const krenulo = z.status === "na_dostavi" || primljeno;
           const kol = krenulo ? s.izdana_kolicina : s.odobrena_kolicina;
           const osn = krenulo ? s.izdana_osnovna : s.odobrena_osnovna;
           const odlucen = (z.status === "odobren" || krenulo) && kol !== null;
           const manje = odlucen && kol !== null && kol < s.trazena_kolicina;
+          const razlika = primljeno && (s.razlika_osnovna ?? 0) !== 0;
           return (
             <li key={s.id}>
               <span className="font-semibold">{s.naziv}</span>: traženo {kolicinaTekst(s.trazena_kolicina, s.trazena_osnovna, s)}
@@ -50,6 +53,13 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
                   {" "}
                   → {krenulo ? "izdato" : "odobreno"} {kolicinaTekst(kol, osn ?? 0, s)}
                   {manje && " (manje od traženog)"}
+                </span>
+              )}
+              {primljeno && s.primljena_kolicina !== null && (
+                <span className={razlika ? "font-bold text-red-700" : "text-green-800"}>
+                  {" "}
+                  → primljeno {kolicinaTekst(s.primljena_kolicina, s.primljena_osnovna ?? 0, s)}
+                  {razlika && ` (razlika ${fmt(s.razlika_osnovna ?? 0)} ${s.mjera})`}
                 </span>
               )}
             </li>
@@ -66,7 +76,13 @@ export function ZahtjevKartica({ z, pokaziObjekat = false }: { z: Zahtjev; pokaz
           {z.odluka_vrijeme && `, ${datumVrijeme(z.odluka_vrijeme)}`}
         </p>
       )}
-      {z.status === "na_dostavi" && z.izdao && (
+      {z.status === "primljeno" && z.primio && (
+        <p className="text-lg text-zinc-500">
+          Primio: {z.primio}
+          {z.primljeno_vrijeme && `, ${datumVrijeme(z.primljeno_vrijeme)}`}
+        </p>
+      )}
+      {(z.status === "na_dostavi" || z.status === "primljeno") && z.izdao && (
         <p className="text-lg text-zinc-500">
           Izdao: {z.izdao}
           {z.izdano_vrijeme && `, ${datumVrijeme(z.izdano_vrijeme)}`}

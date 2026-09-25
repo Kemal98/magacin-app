@@ -1,6 +1,6 @@
 // Tipovi i nazivi za zahtjeve; bez pristupa bazi, pa smiju i u klijentske komponente.
 
-export type StatusZahtjeva = "poslan" | "odobren" | "odbijen" | "na_dostavi";
+export type StatusZahtjeva = "poslan" | "odobren" | "odbijen" | "na_dostavi" | "primljeno";
 
 export type StavkaZahtjeva = {
   id: string;
@@ -17,6 +17,10 @@ export type StavkaZahtjeva = {
   odobrena_osnovna: number | null;
   izdana_kolicina: number | null;
   izdana_osnovna: number | null;
+  primljena_kolicina: number | null;
+  primljena_osnovna: number | null;
+  /** Primljeno minus izdato u osnovnoj mjeri; negativno je manjak. */
+  razlika_osnovna: number | null;
   /** Stanje magacina; vide ga samo magacioner i menadžer. */
   na_stanju: number | null;
 };
@@ -32,6 +36,8 @@ export type Zahtjev = {
   razlog: string | null;
   izdao: string | null;
   izdano_vrijeme: string | null;
+  primio: string | null;
+  primljeno_vrijeme: string | null;
   stavke: StavkaZahtjeva[];
 };
 
@@ -40,4 +46,5 @@ export const NAZIV_STATUSA: Record<StatusZahtjeva, string> = {
   odobren: "Odobren, čeka izdavanje",
   odbijen: "Odbijen",
   na_dostavi: "Na dostavi",
+  primljeno: "Primljeno",
 };
