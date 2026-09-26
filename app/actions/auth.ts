@@ -26,7 +26,7 @@ async function potvrdiAktivnogKorisnika(supabase: ServerKlijent): Promise<Stanje
 /**
  * Prijava s zaštitom od pogađanja: račun se vodi po osobi, ne po IP adresi. Dok je zaključan, PIN se uopće
  * ne provjerava (pa ni tačan PIN ne prolazi i ne može se testirati). Poslije 5 uzastopnih pogrešnih
- * pokušaja račun se zaključava na 1 minut; uspješna prijava poništava brojač. Brojač vodi server
+ * pokušaja račun se zaključavao (ukinuto migracijom 20260927110000: funkcije više ne zaključavaju); uspješna prijava poništava brojač. Brojač vodi server
  * tajnim ključem, jer ga preglednik ne smije moći mijenjati.
  */
 async function prijaviSaZastitom(

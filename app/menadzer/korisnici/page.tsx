@@ -38,7 +38,7 @@ export default async function KorisniciStranica() {
         <section role="status" className="rounded-2xl border-2 border-red-700 bg-red-50 p-4">
           <p className="text-xl font-bold text-red-800">Zaključani računi ({zakljucani.length})</p>
           <p className="text-lg text-red-900">
-            Zaključavanje zbog previše pogrešnih PIN-ova traje 1 minut. Račun možete odmah otključati ispod.
+            Račun je bio zaključan zbog starijih pogrešnih pokušaja. Račun možete odmah otključati ispod.
           </p>
         </section>
       )}

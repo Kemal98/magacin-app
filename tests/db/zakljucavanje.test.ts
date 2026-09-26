@@ -11,86 +11,31 @@ const zakljucanDo = async (db: Client, id: string) =>
   (await db.query("select magacin.provjeri_zakljucavanje($1) as do", [id])).rows[0].do as Date | null;
 const uspjesna = (db: Client, id: string) => db.query("select magacin.zabiljezi_uspjesnu_prijavu($1)", [id]);
 
-const minuta = (od: Date, do_: Date) => (do_.getTime() - od.getTime()) / 60_000;
+/** Red iz vremena prije ukidanja: zaključan račun (pregled i otključavanje i dalje rade). */
+const zakljucaj = (db: Client, id: string) =>
+  db.query(
+    "insert into magacin.pokusaj_prijave (korisnik_id, neuspjesnih, zadnji_pokusaj, zakljucan_do) values ($1, 5, now(), now() + interval '15 minutes')",
+    [id],
+  );
 
 async function korisnik(db: Client, ime = "Amra") {
   return napraviKorisnika(db, { ime, uloga: "magacioner" });
 }
 
-describe("zaključavanje računa poslije pogrešnih PIN-ova", () => {
-  it("račun bez pogrešnih pokušaja nije zaključan", async () => {
+describe("zaključavanje računa je ukinuto", () => {
+  it("koliko god pogrešnih pokušaja bilo, račun se nikad ne zaključava", async () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db);
+      for (let i = 0; i < 20; i++) expect(await pogresan(db, id)).toEqual({ neuspjesnih: 0, zakljucanDo: null });
       expect(await zakljucanDo(db, id)).toBeNull();
+      const { rows } = await db.query("select count(*)::int as n from magacin.pokusaj_prijave where korisnik_id = $1", [id]);
+      expect(rows[0].n).toBe(0);
     });
   });
 
-  it("četiri pogrešna pokušaja ne zaključavaju, peti zaključava na 1 minut", async () => {
+  it("uspješna prijava i dalje prolazi bez greške", async () => {
     await uTransakciji(async (db) => {
-      const id = await korisnik(db);
-      for (let i = 1; i <= 4; i++) {
-        const r = await pogresan(db, id);
-        expect(r).toEqual({ neuspjesnih: i, zakljucanDo: null });
-      }
-      expect(await zakljucanDo(db, id)).toBeNull();
-      const peti = await pogresan(db, id);
-      expect(peti.neuspjesnih).toBe(5);
-      expect(peti.zakljucanDo).not.toBeNull();
-      expect(minuta(new Date(), peti.zakljucanDo!)).toBeGreaterThan(0.9);
-      expect(minuta(new Date(), peti.zakljucanDo!)).toBeLessThanOrEqual(1.1);
-      expect(await zakljucanDo(db, id)).not.toBeNull();
-    });
-  });
-
-  it("dok je račun zaključan, novi pokušaji ne produžavaju zaključavanje", async () => {
-    await uTransakciji(async (db) => {
-      const id = await korisnik(db);
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
-      const prvo = (await zakljucanDo(db, id))!;
-      const opet = await pogresan(db, id);
-      expect(opet.zakljucanDo!.getTime()).toBe(prvo.getTime());
-      expect(opet.neuspjesnih).toBe(5);
-    });
-  });
-
-  it("uspješna prijava poništava brojač pogrešnih pokušaja", async () => {
-    await uTransakciji(async (db) => {
-      const id = await korisnik(db);
-      for (let i = 0; i < 3; i++) await pogresan(db, id);
-      await uspjesna(db, id);
-      // Poslije poništavanja, četiri nova pogrešna pokušaja još ne zaključavaju.
-      for (let i = 1; i <= 4; i++) expect((await pogresan(db, id)).neuspjesnih).toBe(i);
-      expect(await zakljucanDo(db, id)).toBeNull();
-    });
-  });
-
-  it("po isteku zaključavanja račun je ponovo slobodan, a brojanje kreće ispočetka", async () => {
-    await uTransakciji(async (db) => {
-      const id = await korisnik(db);
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
-      expect(await zakljucanDo(db, id)).not.toBeNull();
-      await db.query("update magacin.pokusaj_prijave set zakljucan_do = clock_timestamp() - interval '1 minute' where korisnik_id = $1", [id]);
-      expect(await zakljucanDo(db, id)).toBeNull();
-      expect(await pogresan(db, id)).toEqual({ neuspjesnih: 1, zakljucanDo: null });
-    });
-  });
-
-  it("stari pogrešni pokušaji (više od 10 minuta) se ne sabiraju s novim", async () => {
-    await uTransakciji(async (db) => {
-      const id = await korisnik(db);
-      for (let i = 0; i < 4; i++) await pogresan(db, id);
-      await db.query("update magacin.pokusaj_prijave set zadnji_pokusaj = clock_timestamp() - interval '11 minutes' where korisnik_id = $1", [id]);
-      expect(await pogresan(db, id)).toEqual({ neuspjesnih: 1, zakljucanDo: null });
-    });
-  });
-
-  it("računi se zaključavaju svaki za sebe", async () => {
-    await uTransakciji(async (db) => {
-      const a = await korisnik(db, "Amra");
-      const b = await korisnik(db, "Sead");
-      for (let i = 0; i < 5; i++) await pogresan(db, a);
-      expect(await zakljucanDo(db, a)).not.toBeNull();
-      expect(await zakljucanDo(db, b)).toBeNull();
+      await uspjesna(db, await korisnik(db));
     });
   });
 
@@ -109,8 +54,9 @@ describe("pregled i otključavanje za menadžera", () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db, "Amra");
       const sef = await napraviKorisnika(db, { ime: "Šef", uloga: "menadzer" });
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
-      await pogresan(db, (await korisnik(db, "Sead"))); // jedan pokušaj: nije zaključan
+      await zakljucaj(db, id);
+      const sead = await korisnik(db, "Sead");
+      await db.query("insert into magacin.pokusaj_prijave (korisnik_id, neuspjesnih, zadnji_pokusaj) values ($1, 1, now())", [sead]); // nije zaključan
       await prijaviKao(db, sef);
       const r = await zakljucani(db);
       expect(r).toHaveLength(1);
@@ -124,7 +70,7 @@ describe("pregled i otključavanje za menadžera", () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db, "Amra");
       const sef = await napraviKorisnika(db, { ime: "Šef", uloga: "menadzer" });
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
+      await zakljucaj(db, id);
       await prijaviKao(db, sef);
       const k = (await db.query("select * from magacin.korisnici_pregled()")).rows.find((r) => r.id === id);
       expect(k.zakljucan_do).not.toBeNull();
@@ -135,12 +81,10 @@ describe("pregled i otključavanje za menadžera", () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db, "Amra");
       const sef = await napraviKorisnika(db, { ime: "Šef", uloga: "menadzer" });
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
+      await zakljucaj(db, id);
       await prijaviKao(db, sef);
       await db.query("select magacin.otkljucaj_korisnika($1)", [id]);
       await db.query("reset role");
-      expect(await zakljucanDo(db, id)).toBeNull();
-      expect(await pogresan(db, id)).toEqual({ neuspjesnih: 1, zakljucanDo: null });
       await prijaviKao(db, sef);
       expect(await zakljucani(db)).toHaveLength(0);
     });
@@ -150,7 +94,7 @@ describe("pregled i otključavanje za menadžera", () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db, "Amra");
       const mag = await napraviKorisnika(db, { ime: "Magacioner", uloga: "magacioner" });
-      for (let i = 0; i < 5; i++) await pogresan(db, id);
+      await zakljucaj(db, id);
       await prijaviKao(db, mag);
       await db.query("savepoint a");
       await expect(db.query("select magacin.otkljucaj_korisnika($1)", [id])).rejects.toThrow(/nemate pravo/i);
@@ -187,7 +131,6 @@ describe("brojač se ne može mijenjati izvana", () => {
   it("tabela s brojačem nije čitljiva ni upisiva za prijavljene korisnike", async () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db, "Amra");
-      await pogresan(db, id);
       const mag = await napraviKorisnika(db, { ime: "Magacioner", uloga: "magacioner" });
       await prijaviKao(db, mag);
       await expect(db.query("select * from magacin.pokusaj_prijave")).rejects.toThrow(/permission denied/i);
@@ -199,7 +142,7 @@ describe("brojač se ne može mijenjati izvana", () => {
       const id = await korisnik(db, "Amra");
       await db.query("set local role service_role");
       const { rows } = await db.query("select * from magacin.zabiljezi_neuspjeli_pokusaj($1)", [id]);
-      expect(Number(rows[0].neuspjesnih)).toBe(1);
+      expect(Number(rows[0].neuspjesnih)).toBe(0);
       expect((await db.query("select magacin.provjeri_zakljucavanje($1) as do", [id])).rows[0].do).toBeNull();
       await db.query("select magacin.zabiljezi_uspjesnu_prijavu($1)", [id]);
     });
