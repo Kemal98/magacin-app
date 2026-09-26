@@ -56,3 +56,15 @@ printf 'FROM --platform=linux/amd64 public.ecr.aws/supabase/kong:2.8.1\n' \
 ```
 
 Ako Supabase javi `exec format error` za kong, ponovi tu naredbu (ostaje samo na tvom računaru).
+
+## Prvi menadžer u oblaku
+
+Baza u oblaku je prazna, pa prvog menadžera pravi jednokratna skripta (tajni ključ čita sama iz
+Supabasea i ne ispisuje ga):
+
+```
+SUPABASE_ACCESS_TOKEN=sbp_... PROJECT_REF=<ref> MENADZER_EMAIL=ime@firma.ba \
+MENADZER_LOZINKA='...' node scripts/prvi-menadzer.mjs "Ime Prezime"
+```
+
+Ostale osobe zatim pravi menadžer iz aplikacije.
