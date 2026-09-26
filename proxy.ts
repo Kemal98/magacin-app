@@ -1,3 +1,4 @@
+import { SUPABASE_JAVNI_KLJUC, SUPABASE_URL } from "@/lib/supabase/okruzenje";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
@@ -9,8 +10,8 @@ export async function proxy(zahtjev: NextRequest) {
   let odgovor = NextResponse.next({ request: zahtjev });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    SUPABASE_URL,
+    SUPABASE_JAVNI_KLJUC,
     {
       cookies: {
         getAll: () => zahtjev.cookies.getAll(),
