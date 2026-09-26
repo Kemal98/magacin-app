@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { napraviAdminKlijent } from "@/lib/supabase/admin";
 import { napraviServerKlijent } from "@/lib/supabase/server";
 
 export type StanjePrijave = { greska?: string } | undefined;
@@ -21,13 +22,27 @@ async function potvrdiAktivnogKorisnika(supabase: ServerKlijent): Promise<Stanje
   return { greska: "Ovaj račun nije aktivan. Obratite se menadžeru." };
 }
 
-/** Prijava bez brojača pokušaja (zaključavanje je ukinuto); ne treba tajni ključ. */
-async function prijaviSe(
-  prijava: (supabase: ServerKlijent) => Promise<{ error: unknown }>,
-  pogresnoPoruka: string,
-): Promise<StanjePrijave> {
+/**
+ * Prijava bez brojača pokušaja (zaključavanje je ukinuto). Prvo običnom prijavom; ako ona ne uspije
+ * (npr. javni ključ u okruženju nije ispravan), ista prijava se pokuša preko tajnog ključa i sesija se
+ * postavlja u kolačiće. PIN ili lozinka se i tada provjeravaju u Supabase Auth.
+ */
+async function prijaviSe(email: string, lozinka: string, pogresnoPoruka: string): Promise<StanjePrijave> {
   const supabase = await napraviServerKlijent();
-  const { error } = await prijava(supabase);
+  let { error } = await supabase.auth.signInWithPassword({ email, password: lozinka });
+  if (error) {
+    try {
+      const { data, error: greska } = await napraviAdminKlijent().auth.signInWithPassword({ email, password: lozinka });
+      if (!greska && data.session) {
+        ({ error } = await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        }));
+      }
+    } catch {
+      // Nema tajnog ključa: ostaje prvobitna greška.
+    }
+  }
   if (error) return { greska: pogresnoPoruka };
   const neaktivan = await potvrdiAktivnogKorisnika(supabase);
   if (neaktivan) return neaktivan;
@@ -39,11 +54,7 @@ export async function prijaviPinom(korisnikId: string, pin: string): Promise<Sta
   if (!ID.test(korisnikId) || !PIN.test(pin)) {
     return { greska: "Unesite šestocifreni PIN." };
   }
-  return prijaviSe(
-    (supabase) =>
-      supabase.auth.signInWithPassword({ email: `${korisnikId}@korisnik.magacin.local`, password: pin }),
-    "Pogrešan PIN. Pokušajte ponovo.",
-  );
+  return prijaviSe(`${korisnikId}@korisnik.magacin.local`, pin, "Pogrešan PIN. Pokušajte ponovo.");
 }
 
 /** Prijava menadžera: email i lozinka. */
@@ -53,7 +64,7 @@ export async function prijaviMenadzera(_stanje: StanjePrijave, forma: FormData):
   if (!email || !lozinka) {
     return { greska: "Unesite email i lozinku." };
   }
-  return prijaviSe((supabase) => supabase.auth.signInWithPassword({ email, password: lozinka }), "Pogrešan email ili lozinka.");
+  return prijaviSe(email, lozinka, "Pogrešan email ili lozinka.");
 }
 
 export async function odjavi() {

@@ -5,7 +5,9 @@ const redirect = vi.fn((putanja: string) => {
 });
 vi.mock("next/navigation", () => ({ redirect }));
 
-const server = { auth: { signInWithPassword: vi.fn(), signOut: vi.fn() }, rpc: vi.fn() };
+const server = { auth: { signInWithPassword: vi.fn(), signOut: vi.fn(), setSession: vi.fn() }, rpc: vi.fn() };
+const admin = { auth: { signInWithPassword: vi.fn() } };
+vi.mock("@/lib/supabase/admin", () => ({ napraviAdminKlijent: () => admin }));
 vi.mock("@/lib/supabase/server", () => ({ napraviServerKlijent: async () => server }));
 
 const ID = "11111111-1111-4111-8111-111111111111";
@@ -14,6 +16,8 @@ beforeEach(() => {
   vi.clearAllMocks();
   server.rpc.mockResolvedValue({ error: null });
   server.auth.signOut.mockResolvedValue({});
+  server.auth.setSession.mockResolvedValue({ error: null });
+  admin.auth.signInWithPassword.mockResolvedValue({ data: {}, error: { message: "Invalid login credentials" } });
 });
 
 describe("prijava PIN-om", () => {
@@ -45,6 +49,23 @@ describe("prijava PIN-om", () => {
     server.rpc.mockResolvedValue({ error: { message: "x" } });
     expect(await prijaviPinom(ID, "482913")).toEqual({ greska: "Ovaj račun nije aktivan. Obratite se menadžeru." });
     expect(server.auth.signOut).toHaveBeenCalled();
+  });
+});
+
+describe("rezervna prijava preko tajnog ključa", () => {
+  it("ako obična prijava ne uspije, a tajni ključ prijavi, sesija se postavlja", async () => {
+    const { prijaviPinom } = await import("../../app/actions/auth");
+    server.auth.signInWithPassword.mockResolvedValue({ error: { message: "Invalid API key" } });
+    admin.auth.signInWithPassword.mockResolvedValue({ data: { session: { access_token: "a", refresh_token: "r" } }, error: null });
+    await expect(prijaviPinom(ID, "482913")).rejects.toThrow("REDIRECT:/");
+    expect(server.auth.setSession).toHaveBeenCalledWith({ access_token: "a", refresh_token: "r" });
+  });
+
+  it("ako ni tajni ključ ne prijavi (pogrešan PIN), ostaje poruka o pogrešnom PIN-u", async () => {
+    const { prijaviPinom } = await import("../../app/actions/auth");
+    server.auth.signInWithPassword.mockResolvedValue({ error: { message: "x" } });
+    expect(await prijaviPinom(ID, "482913")).toEqual({ greska: "Pogrešan PIN. Pokušajte ponovo." });
+    expect(server.auth.setSession).not.toHaveBeenCalled();
   });
 });
 
