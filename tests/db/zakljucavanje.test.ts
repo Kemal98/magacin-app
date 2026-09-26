@@ -25,7 +25,7 @@ describe("zaključavanje računa poslije pogrešnih PIN-ova", () => {
     });
   });
 
-  it("četiri pogrešna pokušaja ne zaključavaju, peti zaključava na 15 minuta", async () => {
+  it("četiri pogrešna pokušaja ne zaključavaju, peti zaključava na 1 minut", async () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db);
       for (let i = 1; i <= 4; i++) {
@@ -36,8 +36,8 @@ describe("zaključavanje računa poslije pogrešnih PIN-ova", () => {
       const peti = await pogresan(db, id);
       expect(peti.neuspjesnih).toBe(5);
       expect(peti.zakljucanDo).not.toBeNull();
-      expect(minuta(new Date(), peti.zakljucanDo!)).toBeGreaterThan(14);
-      expect(minuta(new Date(), peti.zakljucanDo!)).toBeLessThanOrEqual(15.1);
+      expect(minuta(new Date(), peti.zakljucanDo!)).toBeGreaterThan(0.9);
+      expect(minuta(new Date(), peti.zakljucanDo!)).toBeLessThanOrEqual(1.1);
       expect(await zakljucanDo(db, id)).not.toBeNull();
     });
   });
@@ -75,11 +75,11 @@ describe("zaključavanje računa poslije pogrešnih PIN-ova", () => {
     });
   });
 
-  it("stari pogrešni pokušaji (više od pola sata) se ne sabiraju s novim", async () => {
+  it("stari pogrešni pokušaji (više od 10 minuta) se ne sabiraju s novim", async () => {
     await uTransakciji(async (db) => {
       const id = await korisnik(db);
       for (let i = 0; i < 4; i++) await pogresan(db, id);
-      await db.query("update magacin.pokusaj_prijave set zadnji_pokusaj = clock_timestamp() - interval '31 minutes' where korisnik_id = $1", [id]);
+      await db.query("update magacin.pokusaj_prijave set zadnji_pokusaj = clock_timestamp() - interval '11 minutes' where korisnik_id = $1", [id]);
       expect(await pogresan(db, id)).toEqual({ neuspjesnih: 1, zakljucanDo: null });
     });
   });
